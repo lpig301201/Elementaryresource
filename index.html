@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>垃圾分類小英雄</title>
+  <style>
+    :root {
+      --sky1:#8ddcff;
+      --sky2:#eaf9ff;
+      --grass1:#94d96a;
+      --grass2:#5fbf5d;
+      --soil1:#856048;
+      --soil2:#5b4030;
+      --card:rgba(255,255,255,.88);
+      --line:rgba(255,255,255,.9);
+      --text:#19324d;
+      --muted:#4f6b86;
+      --green:#1f9d55;
+      --orange:#f97316;
+      --blue:#2563eb;
+      --red:#ef4444;
+      --shadow:0 14px 34px rgba(20,50,80,.16);
+    }
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html,body {
+      margin:0; padding:0; overflow:hidden;
+      font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,var(--sky1),var(--sky2));
+    }
+    body { min-height:100dvh; }
+    .app { min-height:100dvh; display:flex; flex-direction:column; }
+    .topbar {
+      position:relative; z-index:5;
+      display:grid; grid-template-columns: minmax(0,1.1fr) auto;
+      gap:12px; padding:12px 14px 10px;
+    }
+    .hero-card, .score-wrap > div, .info-card, .mission-card {
+      background:var(--card);
+      border:2px solid rgba(255,255,255,.95);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .hero-card {
+      padding:12px 16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.82));
+    }
+    .hero-title { font-weight:900; font-size:24px; line-height:1.1; }
+    .hero-sub { margin-top:5px; font-size:13px; color:var(--muted); line-height:1.45; }
+    .score-wrap { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; justify-content:flex-end; }
+    .score-wrap > div {
+      padding:10px 12px; font-weight:900; font-size:15px; min-width:92px; text-align:center;
+    }
+
+    .game {
+      position:relative; flex:1; min-height:0; overflow:hidden;
+    }
+    .sky {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 12% 15%, rgba(255,255,255,.95) 0 26px, transparent 27px),
+        radial-gradient(circle at 20% 16%, rgba(255,255,255,.8) 0 18px, transparent 19px),
+        radial-gradient(circle at 72% 14%, rgba(255,255,255,.95) 0 28px, transparent 29px),
+        radial-gradient(circle at 80% 16%, rgba(255,255,255,.8) 0 18px, transparent 19px),
+        linear-gradient(180deg, #82d7ff 0%, #c7f0ff 42%, #b5e88f 43%, #78d06a 100%);
+    }
+    .sun {
+      position:absolute; right:18px; top:22px; width:78px; height:78px; border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #fff7cc 0 20%, #ffd76a 45%, #ffbf3a 100%);
+      box-shadow:0 0 0 10px rgba(255,215,106,.18), 0 0 0 20px rgba(255,215,106,.1);
+    }
+    .mission-card {
+      position:absolute; left:14px; right:14px; top:10px; z-index:4;
+      display:grid; grid-template-columns: minmax(0,1fr) auto; gap:12px; align-items:center;
+      padding:12px 16px;
+    }
+    .mission-card small { display:block; color:var(--muted); font-weight:700; margin-bottom:4px; }
+    .mission-card b { font-size:28px; }
+    .mission-tip {
+      border-radius:999px; padding:10px 14px; font-weight:900; color:#fff;
+      background:linear-gradient(135deg,#36b36f,#1f9d55);
+      box-shadow:0 8px 18px rgba(31,157,85,.25);
+      white-space:nowrap;
+    }
+    .info-card {
+      position:absolute; left:14px; top:110px; z-index:4;
+      width:min(370px, calc(100vw - 28px));
+      padding:14px 16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(245,251,255,.9));
+    }
+    .info-head { display:flex; align-items:center; gap:8px; font-weight:900; font-size:18px; }
+    .tag {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px; font-size:13px; font-weight:900; color:#fff;
+      background:linear-gradient(135deg,#3ba0ff,#2563eb);
+      margin:10px 0 8px;
+    }
+    .item-name { font-size:22px; font-weight:900; margin:0 0 6px; }
+    .item-desc { font-size:15px; line-height:1.7; color:#2b4966; min-height:72px; }
+    .item-note { font-size:13px; color:#5d7690; margin-top:6px; }
+
+    .ground {
+      position:absolute; left:0; right:0; bottom:92px; height:180px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.2), transparent 18px),
+        linear-gradient(180deg, var(--soil1), var(--soil2));
+      border-top:5px solid rgba(255,255,255,.6);
+      box-shadow: inset 0 18px 24px rgba(255,255,255,.08);
+    }
+    .grass {
+      position:absolute; left:0; right:0; bottom:248px; height:36px;
+      background:linear-gradient(180deg,var(--grass1),var(--grass2));
+      border-top:3px solid rgba(255,255,255,.4);
+    }
+    .hit-zone {
+      position:absolute; left:50%; transform:translateX(-50%);
+      bottom:92px; width:118px; height:180px; z-index:2;
+      border-left:4px dashed rgba(255,255,255,.95);
+      border-right:4px dashed rgba(255,255,255,.95);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.12));
+    }
+    .zone-label {
+      position:absolute; left:50%; transform:translateX(-50%);
+      bottom:280px; z-index:4;
+      padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.92);
+      font-weight:900; font-size:14px; box-shadow:var(--shadow);
+    }
+
+    .hero {
+      position:absolute; left:50%; transform:translateX(-50%);
+      bottom:110px; width:88px; height:120px; z-index:3;
+      filter:drop-shadow(0 10px 10px rgba(0,0,0,.15));
+    }
+    .hero .head {
+      width:42px; height:42px; border-radius:50%; margin:0 auto;
+      background:#ffd9b8; border:2px solid rgba(0,0,0,.08);
+    }
+    .hero .helmet {
+      width:52px; height:18px; background:#22c55e; border-radius:14px 14px 8px 8px; margin:-2px auto 0;
+    }
+    .hero .body {
+      width:54px; height:40px; background:linear-gradient(180deg,#31a6ff,#2563eb);
+      border-radius:16px 16px 12px 12px; margin:2px auto 0; position:relative;
+    }
+    .hero .logo {
+      position:absolute; left:50%; top:9px; transform:translateX(-50%);
+      font-size:18px;
+    }
+    .hero .arm {
+      position:absolute; top:50px; width:18px; height:10px; background:#ffd9b8; border-radius:10px;
+    }
+    .hero .arm.left { left:8px; }
+    .hero .arm.right { right:8px; transform-origin:left center; }
+    .hero .tool {
+      position:absolute; right:-3px; top:45px; font-size:22px; transform-origin:left center;
+    }
+    .hero .legs { display:flex; justify-content:center; gap:10px; margin-top:3px; }
+    .hero .leg { width:12px; height:30px; border-radius:10px; background:#475569; }
+    .hero.attack .arm.right, .hero.attack .tool {
+      animation:punch .18s ease-out 1;
+    }
+    @keyframes punch {
+      0% { transform:rotate(0deg) translateX(0); }
+      50% { transform:rotate(-36deg) translateX(8px); }
+      100% { transform:rotate(0deg) translateX(0); }
+    }
+
+    .item {
+      position:absolute; bottom:122px; min-width:88px; max-width:108px; min-height:84px;
+      padding:10px 8px 8px; z-index:2;
+      display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(246,251,255,.88));
+      border:2px solid rgba(255,255,255,.98);
+      box-shadow:0 16px 26px rgba(0,0,0,.12);
+    }
+    .item .emoji { font-size:30px; line-height:1; }
+    .item .name { margin-top:6px; font-size:15px; font-weight:900; line-height:1.15; word-break:break-word; }
+    .item.good { outline:4px solid rgba(31,157,85,.35); transform:scale(1.05); }
+    .item.bad { outline:4px solid rgba(239,68,68,.25); }
+
+    .fx {
+      position:absolute; z-index:10; pointer-events:none; font-weight:900; font-size:34px;
+      text-shadow:0 4px 10px rgba(255,255,255,.85);
+      animation:floatUp .75s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { transform:translate(-50%, 0) scale(.75); opacity:0; }
+      18% { opacity:1; }
+      100% { transform:translate(-50%, -68px) scale(1.08); opacity:0; }
+    }
+
+    .controls {
+      position:relative; z-index:5; padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.5));
+      backdrop-filter: blur(8px);
+      display:grid; grid-template-columns:1fr;
+    }
+    button {
+      appearance:none; border:none; border-radius:22px; padding:18px 16px;
+      color:#fff; font-size:24px; font-weight:900; letter-spacing:.5px;
+      background:linear-gradient(135deg,#ff9c3f,#f97316);
+      box-shadow:0 16px 26px rgba(249,115,22,.25);
+    }
+
+    .overlay {
+      position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
+      background:rgba(18,40,67,.3); padding:18px;
+    }
+    .card {
+      width:min(560px,100%); background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,250,255,.95));
+      border-radius:30px; padding:24px 20px; text-align:center; box-shadow:0 26px 60px rgba(0,0,0,.22);
+    }
+    .card h1,.card h2 { margin:0 0 10px; line-height:1.15; }
+    .card p { margin:8px 0; line-height:1.75; color:#35516d; }
+    .big-btn, .sec-btn {
+      display:inline-block; text-decoration:none; color:#fff; font-weight:900;
+      border-radius:18px; padding:14px 18px; margin-top:10px;
+    }
+    .big-btn { background:linear-gradient(135deg,#2aba65,#1f9d55); box-shadow:0 12px 24px rgba(31,157,85,.22); }
+    .sec-btn { background:linear-gradient(135deg,#3d93ff,#2563eb); }
+    .qr {
+      width:220px; max-width:70vw; aspect-ratio:1; object-fit:contain;
+      border-radius:18px; background:white; border:1px solid #d6e2ee; margin:14px auto 0;
+    }
+    .hidden { display:none !important; }
+
+    .debug {
+      position:absolute; right:10px; top:92px; z-index:8; background:rgba(17,24,39,.75); color:#fff;
+      border-radius:14px; padding:8px 10px; font-size:12px; line-height:1.55;
+    }
+
+    @media (max-width: 640px) {
+      .topbar { grid-template-columns:1fr; }
+      .score-wrap { justify-content:flex-start; }
+      .hero-title { font-size:22px; }
+      .mission-card { top:80px; }
+      .mission-card b { font-size:23px; }
+      .mission-tip { font-size:13px; padding:9px 12px; }
+      .info-card { top:154px; width:min(320px, calc(100vw - 28px)); padding:12px 14px; }
+      .item-name { font-size:20px; }
+      .item-desc { font-size:14px; min-height:88px; }
+      .debug { top:246px; }
+      .ground { height:170px; }
+      .grass { bottom:238px; }
+      .hit-zone { height:170px; }
+      .zone-label { bottom:266px; font-size:13px; }
+      .hero { bottom:108px; }
+      .item { min-width:80px; max-width:96px; min-height:78px; }
+      button { font-size:22px; padding:17px 14px; }
+    }
+
+    @media (max-width: 820px) {
+      body {
+        align-items: flex-start;
+        padding: 8px;
+      }
+      .game-shell {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 18px;
+      }
+      .hud {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 10px;
+      }
+      .hud-card {
+        min-width: 0;
+      }
+      .game-area {
+        height: min(56vh, 460px);
+      }
+      .top-left-panel {
+        top: 8px;
+        left: 8px;
+        width: min(260px, calc(100vw - 16px));
+      }
+      .info-card {
+        padding: 10px 12px;
+        border-radius: 14px;
+      }
+      .info-card h3 {
+        font-size: 15px;
+      }
+      .info-card p,
+      .info-card .mini {
+        font-size: 12px;
+      }
+      .character {
+        width: 70px;
+        height: 92px;
+        left: 15%;
+      }
+      .lane-mark {
+        left: 36%;
+        width: 84px;
+      }
+      .controls {
+        padding: 10px 12px 14px;
+      }
+      .control-row {
+        flex-wrap: wrap;
+      }
+      .btn {
+        width: 100%;
+      }
+      .item {
+        transform: scale(0.9);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .hud {
+        grid-template-columns: 1fr;
+      }
+      .game-area {
+        height: min(52vh, 400px);
+      }
+      .top-left-panel {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: min(220px, calc(100vw - 12px));
+      }
+      .info-card {
+        padding: 8px 10px;
+      }
+      .info-card h3 {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .info-card p,
+      .info-card .mini {
+        font-size: 11px;
+        line-height: 1.35;
+      }
+      .character {
+        width: 62px;
+        height: 84px;
+        left: 12%;
+      }
+      .lane-mark {
+        left: 34%;
+        width: 78px;
+      }
+      .item {
+        min-width: 64px;
+        padding: 8px 10px;
+        font-size: 18px;
+      }
+      .item-name {
+        font-size: 12px;
+      }
+    }
+
+  
+    @media (max-width: 820px) {
+      .game-shell {
+        overflow: visible;
+      }
+      .game-area {
+        height: min(48vh, 340px);
+      }
+      .top-left-panel {
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 10px 0 0 0;
+        z-index: 1;
+      }
+      .top-left-panel .info-card {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .game-area {
+        height: min(42vh, 300px);
+      }
+      .top-left-panel {
+        margin-top: 8px;
+      }
+    }
+
+
+    @media (max-width: 820px) {
+      .debug-box {
+        right: 8px !important;
+        bottom: 8px !important;
+        top: auto !important;
+        font-size: 11px !important;
+        padding: 8px 10px !important;
+        max-width: 110px;
+      }
+    }
+
+
+    /* mobile hotfix for LINE in-app browser */
+    @media (max-width: 820px) {
+      html, body {
+        overflow: hidden;
+        width: 100%;
+      }
+      .topbar {
+        gap: 10px;
+        padding: 10px 10px 8px;
+      }
+      .hero-card {
+        padding: 12px 14px;
+        border-radius: 20px;
+      }
+      .hero-title {
+        font-size: 20px;
+      }
+      .hero-sub {
+        font-size: 12px;
+        line-height: 1.35;
+      }
+      .score-wrap > div {
+        min-width: 0;
+        flex: 1 1 0;
+        padding: 10px 8px;
+        font-size: 14px;
+      }
+      .game {
+        overflow: hidden;
+      }
+      .mission-card {
+        left: 10px;
+        right: 10px;
+        top: 8px;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 18px;
+      }
+      .mission-card small {
+        font-size: 13px;
+      }
+      .mission-card b {
+        font-size: 22px;
+        line-height: 1.2;
+      }
+      .mission-tip {
+        justify-self: start;
+        max-width: 100%;
+        white-space: normal;
+        font-size: 13px;
+        line-height: 1.35;
+        padding: 8px 12px;
+      }
+      .info-card {
+        left: 10px;
+        right: 10px;
+        top: 106px;
+        width: auto;
+        max-width: none;
+        padding: 10px 12px;
+        border-radius: 18px;
+      }
+      .info-head {
+        font-size: 16px;
+      }
+      .tag {
+        margin: 8px 0 6px;
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      .item-name {
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+      .item-desc {
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 0;
+        max-height: 88px;
+        overflow-y: auto;
+        padding-right: 2px;
+      }
+      .item-note {
+        font-size: 12px;
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+      .sun {
+        width: 64px;
+        height: 64px;
+        right: 12px;
+        top: 22px;
+      }
+      .zone-label {
+        bottom: 250px;
+        font-size: 12px;
+        padding: 7px 10px;
+      }
+      .grass {
+        bottom: 224px;
+        height: 28px;
+      }
+      .ground {
+        bottom: 86px;
+        height: 138px;
+      }
+      .hit-zone {
+        bottom: 86px;
+        width: 92px;
+        height: 138px;
+      }
+      .hero {
+        bottom: 101px;
+        width: 76px;
+        height: 104px;
+      }
+      .item {
+        bottom: 110px;
+        min-width: 72px;
+        max-width: 88px;
+        min-height: 68px;
+        border-radius: 18px;
+        padding: 8px 6px;
+      }
+      .item .emoji {
+        font-size: 24px;
+      }
+      .item .name {
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .controls {
+        padding: 10px 10px calc(12px + env(safe-area-inset-bottom));
+      }
+      button {
+        border-radius: 18px;
+        font-size: 20px;
+        padding: 16px 14px;
+      }
+      .card {
+        border-radius: 24px;
+        padding: 18px 16px;
+      }
+      .card h1, .card h2 {
+        font-size: 24px;
+      }
+      .card p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .debug {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hero-title {
+        font-size: 18px;
+      }
+      .hero-sub {
+        font-size: 11px;
+      }
+      .mission-card {
+        top: 6px;
+        padding: 9px 10px;
+      }
+      .mission-card b {
+        font-size: 20px;
+      }
+      .info-card {
+        top: 96px;
+        padding: 9px 10px;
+      }
+      .info-head {
+        font-size: 15px;
+      }
+      .item-name {
+        font-size: 17px;
+      }
+      .item-desc {
+        font-size: 13px;
+        max-height: 76px;
+      }
+      .zone-label {
+        bottom: 236px;
+      }
+      .grass {
+        bottom: 210px;
+      }
+      .ground {
+        height: 124px;
+        bottom: 86px;
+      }
+      .hit-zone {
+        height: 124px;
+        bottom: 86px;
+      }
+      .hero {
+        width: 70px;
+        bottom: 99px;
+      }
+      .item {
+        min-width: 66px;
+        max-width: 80px;
+        min-height: 62px;
+      }
+      button {
+        font-size: 18px;
+        padding: 15px 12px;
+      }
+    }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="hero-card">
+      <div class="hero-title">♻️ 垃圾分類小英雄</div>
+      <div class="hero-sub">40秒挑戰｜命中10次達標即可參加 LINE 抽獎</div>
+    </div>
+    <div class="score-wrap">
+      <div>⏱ <span id="timeText">40</span> 秒</div>
+      <div>⭐ <span id="scoreText">0</span> 分</div>
+    </div>
+  </div>
+
+  <div class="game" id="gameArea">
+    <div class="sky"></div>
+    <div class="sun"></div>
+
+    <div class="mission-card">
+      <div>
+        <small>🎯 任務目標</small>
+        <b id="missionText">請開始遊戲</b>
+      </div>
+      <div class="mission-tip" id="hintText">看到正確物品再按「出手！」</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-head">📘 📘 分類提示</div>
+      <div class="tag" id="infoTag">尚未命中任何物品</div>
+      <div class="item-name" id="infoName">準備開始</div>
+      <div class="item-desc" id="infoDesc">遊戲開始後，會顯示你擊中的物品與分類方式。</div>
+      <div class="item-note" id="infoNote">小提醒：只打目標，別亂出手！</div>
+    </div>
+
+    <div class="zone-label">出手！區</div>
+    <div class="hit-zone"></div>
+    <div class="grass"></div>
+    <div class="ground"></div>
+
+    <div class="hero" id="hero">
+      <div class="head"></div>
+      <div class="helmet"></div>
+      <div class="arm left"></div>
+      <div class="arm right"></div>
+      <div class="tool">🦯</div>
+      <div class="body"><div class="logo">♻️</div></div>
+      <div class="legs"><div class="leg"></div><div class="leg"></div></div>
+    </div>
+
+    <div class="debug hidden" id="debugBox">題庫 0<br>場上 0<br>目標 -</div>
+
+    <div class="overlay" id="startOverlay">
+      <div class="card">
+        <h1>🌱 分類任務開始前</h1>
+        <p>每回合會指定一種目標：<b>一般垃圾、資源回收、廚餘</b>。</p>
+        <p>物品會沿著地面從右往左前進。當它進入中間的 <b>出手！區</b>，如果符合目標，就按下 <b>💥 出手！</b>！</p>
+        <p>每個正確物品 <b>+10 分</b>，40 秒內達到 <b>100 分</b> 就能參加抽獎 🎉</p>
+        <button id="startBtn" style="background:linear-gradient(135deg,#2aba65,#1f9d55); box-shadow:0 16px 26px rgba(31,157,85,.25);">開始遊戲</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="resultOverlay">
+      <div class="card">
+        <h2 id="resultTitle">遊戲結束</h2>
+        <p id="resultDesc"></p>
+        <img id="qrImage" class="qr hidden" alt="LINE QR Code" />
+        <div id="resultLinks"></div>
+        <button id="restartBtn" style="background:linear-gradient(135deg,#3d93ff,#2563eb); box-shadow:0 16px 26px rgba(37,99,235,.25); margin-top:12px;">再挑戰一次</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" id="controlsArea">
+    <button id="hitBtn">💥 出手！</button>
+  </div>
+</div>
+
+<script>
+const GAME_CONFIG = {
+  lineJoinUrl: "https://line.me/R/ti/p/@YOUR_LINE_ID",
+  lineDrawUrl: "https://line.me/R/ti/p/@YOUR_LINE_ID",
+  duration: 40,
+  passScore: 100,
+  spawnEveryMs: 900,
+  moveSpeed: 3.75,
+  maxItems: 3
+};
+
+const QUESTION_BANK = [{"name": "2.5吋磁片", "type": "一般垃圾"}, {"name": "3.5吋磁片", "type": "一般垃圾"}, {"name": "3C手機", "type": "資源回收"}, {"name": "3C手錶", "type": "資源回收"}, {"name": "ABS塑鋼", "type": "一般垃圾"}, {"name": "BB彈", "type": "一般垃圾"}, {"name": "CD光碟片", "type": "資源回收"}, {"name": "CD外殼", "type": "資源回收"}, {"name": "CD盒", "type": "資源回收"}, {"name": "DVD光碟片", "type": "資源回收"}, {"name": "EPE泡棉", "type": "一般垃圾"}, {"name": "EPE珍珠棉", "type": "一般垃圾"}, {"name": "EPE緩衝包材", "type": "一般垃圾"}, {"name": "GoPro", "type": "資源回收"}, {"name": "LED崁燈", "type": "一般垃圾"}, {"name": "LED手電筒", "type": "一般垃圾"}, {"name": "LED支架燈", "type": "資源回收"}, {"name": "LED檯燈", "type": "一般垃圾"}, {"name": "LED燈條", "type": "一般垃圾"}, {"name": "LED燈泡", "type": "資源回收"}, {"name": "LED燈管", "type": "資源回收"}, {"name": "LED緊急照明光源", "type": "一般垃圾"}, {"name": "L夾", "type": "一般垃圾"}, {"name": "MP3播放器", "type": "資源回收"}, {"name": "OA辦公桌屏風", "type": "資源回收"}, {"name": "PET塑鋼帶", "type": "資源回收"}, {"name": "PET打包帶", "type": "資源回收"}, {"name": "PE塑膠水管", "type": "一般垃圾"}, {"name": "PE軟管", "type": "資源回收"}, {"name": "PP打包帶", "type": "資源回收"}, {"name": "PU巧拼地墊", "type": "一般垃圾"}, {"name": "PVC塑膠壓條", "type": "一般垃圾"}, {"name": "PVC軟水管", "type": "一般垃圾"}, {"name": "Pizza盒", "type": "資源回收"}, {"name": "T恤", "type": "資源回收"}, {"name": "USB", "type": "資源回收"}, {"name": "USB隨身手持電風扇", "type": "一般垃圾"}, {"name": "UVA螺旋燈泡", "type": "一般垃圾"}, {"name": "U型夾", "type": "一般垃圾"}, {"name": "VCD光碟片", "type": "資源回收"}, {"name": "WILL", "type": "一般垃圾"}, {"name": "wifi機", "type": "資源回收"}, {"name": "一般紙提袋", "type": "資源回收"}, {"name": "一般藥品空罐", "type": "資源回收"}, {"name": "一般藥物", "type": "一般垃圾"}, {"name": "一般雨衣", "type": "一般垃圾"}, {"name": "三明治機", "type": "資源回收"}, {"name": "上衣", "type": "資源回收"}, {"name": "不沾鍋", "type": "資源回收"}, {"name": "不沾飯匙", "type": "一般垃圾"}, {"name": "不織布袋", "type": "一般垃圾"}, {"name": "不銹鋼保鮮盒", "type": "資源回收"}, {"name": "不銹鋼鍋", "type": "資源回收"}, {"name": "不鏽鋼保溫杯", "type": "資源回收"}, {"name": "不鏽鋼保溫瓶", "type": "資源回收"}, {"name": "不鏽鋼包覆瓦斯管", "type": "資源回收"}, {"name": "不鏽鋼密漏勺", "type": "資源回收"}, {"name": "不鏽鋼瓦斯鋼瓶", "type": "資源回收"}, {"name": "中提琴", "type": "資源回收"}, {"name": "中藥渣", "type": "廚餘"}, {"name": "主機板", "type": "資源回收"}, {"name": "乖乖包裝袋", "type": "一般垃圾"}, {"name": "乳液瓶", "type": "資源回收"}, {"name": "乳霜瓶罐", "type": "資源回收"}, {"name": "乾果機", "type": "資源回收"}, {"name": "乾淨保麗龍", "type": "資源回收"}, {"name": "乾淨咖啡濾紙", "type": "資源回收"}, {"name": "乾燥劑", "type": "一般垃圾"}, {"name": "乾衣機", "type": "資源回收"}, {"name": "乾電池", "type": "資源回收"}, {"name": "二次鋰電池", "type": "資源回收"}, {"name": "人字拖", "type": "一般垃圾"}, {"name": "便利貼", "type": "一般垃圾"}, {"name": "便條紙", "type": "一般垃圾"}, {"name": "便當紙盒", "type": "資源回收"}, {"name": "保溫膏", "type": "一般垃圾"}, {"name": "保險箱", "type": "資源回收"}, {"name": "保鮮盒", "type": "資源回收"}, {"name": "保鮮膜", "type": "一般垃圾"}, {"name": "保鮮膜滾筒", "type": "資源回收"}, {"name": "保麗龍杯", "type": "資源回收"}, {"name": "保麗龍泡麵碗", "type": "資源回收"}, {"name": "保麗龍生鮮托盤", "type": "資源回收"}, {"name": "保麗龍粒", "type": "一般垃圾"}, {"name": "保麗龍蛋糕盒", "type": "資源回收"}, {"name": "保齡球", "type": "資源回收"}, {"name": "信封", "type": "資源回收"}, {"name": "信封宣傳單", "type": "資源回收"}, {"name": "信用卡", "type": "一般垃圾"}, {"name": "修正帶外殼", "type": "資源回收"}, {"name": "修正液瓶", "type": "一般垃圾"}, {"name": "健身抖抖機", "type": "資源回收"}, {"name": "偵煙探測器", "type": "一般垃圾"}, {"name": "傳真機", "type": "資源回收"}, {"name": "傳真用圖紙", "type": "一般垃圾"}, {"name": "傳真紙", "type": "資源回收"}, {"name": "傳統直管", "type": "資源回收"}, {"name": "傳輸線", "type": "資源回收"}, {"name": "優格機", "type": "資源回收"}, {"name": "優格盒", "type": "資源回收"}, {"name": "儲熱式熱水器", "type": "資源回收"}, {"name": "充氣床", "type": "一般垃圾"}, {"name": "充電器", "type": "資源回收"}, {"name": "充電式喇叭", "type": "資源回收"}, {"name": "充電式鋰電池", "type": "資源回收"}, {"name": "充電線", "type": "資源回收"}, {"name": "充電電池", "type": "資源回收"}, {"name": "光碟桶", "type": "資源回收"}, {"name": "光碟盒", "type": "資源回收"}, {"name": "光筆", "type": "資源回收"}, {"name": "免治馬桶座墊", "type": "一般垃圾"}, {"name": "免治馬桶蓋", "type": "一般垃圾"}, {"name": "免洗刀叉", "type": "一般垃圾"}, {"name": "免洗湯匙", "type": "一般垃圾"}, {"name": "免洗竹筷子", "type": "一般垃圾"}, {"name": "免洗筷", "type": "一般垃圾"}, {"name": "兒童塑膠地墊", "type": "一般垃圾"}, {"name": "兒童彩球", "type": "一般垃圾"}, {"name": "兒童汽車增高墊", "type": "一般垃圾"}, {"name": "兒童玩具汽車", "type": "一般垃圾"}, {"name": "內衣清洗網袋", "type": "一般垃圾"}, {"name": "內衣褲", "type": "一般垃圾"}, {"name": "八字游泳夾腳", "type": "一般垃圾"}, {"name": "再生紙", "type": "資源回收"}, {"name": "冰淇淋機", "type": "資源回收"}, {"name": "冷凍箱", "type": "資源回收"}, {"name": "冷凍餐盒", "type": "資源回收"}, {"name": "冷氣機", "type": "資源回收"}, {"name": "冷藏箱", "type": "資源回收"}, {"name": "冷陰極燈", "type": "資源回收"}, {"name": "凝膠瓶罐", "type": "資源回收"}, {"name": "列印機", "type": "資源回收"}, {"name": "刨冰機", "type": "資源回收"}, {"name": "刨刀", "type": "一般垃圾"}, {"name": "刨絲刀", "type": "一般垃圾"}, {"name": "刮鬍刀", "type": "一般垃圾"}, {"name": "刷子", "type": "一般垃圾"}, {"name": "剃鬍水", "type": "資源回收"}, {"name": "剃鬍膏瓶罐", "type": "資源回收"}, {"name": "削皮刀", "type": "一般垃圾"}, {"name": "削鉛筆機", "type": "一般垃圾"}, {"name": "剩菜剩飯", "type": "廚餘"}, {"name": "剪刀", "type": "資源回收"}, {"name": "加濕器", "type": "資源回收"}, {"name": "助行器", "type": "資源回收"}, {"name": "動力音波微霧護髮機機", "type": "資源回收"}, {"name": "動物油", "type": "廚餘"}, {"name": "動物飼料", "type": "廚餘"}, {"name": "包裝用保麗龍", "type": "資源回收"}, {"name": "包裝用蝴蝶結", "type": "一般垃圾"}, {"name": "包裝紙", "type": "資源回收"}, {"name": "包銅線", "type": "資源回收"}, {"name": "化妝包", "type": "一般垃圾"}, {"name": "化妝油瓶罐", "type": "資源回收"}, {"name": "化學纖維物品", "type": "一般垃圾"}, {"name": "化工用品塑膠桶", "type": "資源回收"}, {"name": "化粧水瓶", "type": "資源回收"}, {"name": "卡式爐", "type": "資源回收"}, {"name": "卡式爐瓦斯罐", "type": "資源回收"}, {"name": "即飲果醋袋", "type": "一般垃圾"}, {"name": "卸妝乳軟管", "type": "資源回收"}, {"name": "原子筆塑膠筆桿", "type": "一般垃圾"}, {"name": "原子筆筆芯", "type": "一般垃圾"}, {"name": "原料桶", "type": "資源回收"}, {"name": "去光水", "type": "一般垃圾"}, {"name": "去漬油", "type": "一般垃圾"}, {"name": "叉子", "type": "資源回收"}, {"name": "口紅外殼", "type": "一般垃圾"}, {"name": "口罩", "type": "一般垃圾"}, {"name": "口香糖包裝紙", "type": "一般垃圾"}, {"name": "可伸縮矽膠餐具", "type": "一般垃圾"}, {"name": "吉他", "type": "資源回收"}, {"name": "名片", "type": "一般垃圾"}, {"name": "含汞燈", "type": "資源回收"}, {"name": "吸水珠", "type": "一般垃圾"}, {"name": "吸油面紙", "type": "一般垃圾"}, {"name": "吸管", "type": "一般垃圾"}, {"name": "吸頂燈", "type": "一般垃圾"}, {"name": "吹風機", "type": "資源回收"}, {"name": "呼叫器", "type": "一般垃圾"}, {"name": "咖啡不鏽鋼濾網", "type": "資源回收"}, {"name": "咖啡機", "type": "資源回收"}, {"name": "咖啡渣", "type": "廚餘"}, {"name": "咖啡豆袋子", "type": "一般垃圾"}, {"name": "咖啡陶瓷杯", "type": "一般垃圾"}, {"name": "商業冰箱", "type": "資源回收"}, {"name": "啞鈴", "type": "資源回收"}, {"name": "啤酒罐", "type": "資源回收"}, {"name": "喇叭鎖", "type": "資源回收"}, {"name": "噴漆罐", "type": "資源回收"}, {"name": "回鍋油", "type": "資源回收"}, {"name": "國畫布", "type": "一般垃圾"}, {"name": "圍巾", "type": "一般垃圾"}, {"name": "圍裙", "type": "一般垃圾"}, {"name": "圓桶", "type": "資源回收"}, {"name": "圖釘", "type": "資源回收"}, {"name": "地板刷柄", "type": "資源回收"}, {"name": "地毯", "type": "一般垃圾"}, {"name": "地瓜", "type": "廚餘"}, {"name": "地貼", "type": "一般垃圾"}, {"name": "培養土", "type": "一般垃圾"}, {"name": "堅果果仁", "type": "廚餘"}, {"name": "報紙", "type": "資源回收"}, {"name": "塑膠PP編織米袋", "type": "一般垃圾"}, {"name": "塑膠光面廢紙", "type": "一般垃圾"}, {"name": "塑膠免洗盒類", "type": "資源回收"}, {"name": "塑膠免洗餐盤", "type": "資源回收"}, {"name": "塑膠兒童玩具", "type": "一般垃圾"}, {"name": "塑膠刀叉", "type": "一般垃圾"}, {"name": "塑膠化工桶", "type": "資源回收"}, {"name": "塑膠地墊", "type": "一般垃圾"}, {"name": "塑膠壓條", "type": "一般垃圾"}, {"name": "塑膠嬰兒餐桌", "type": "一般垃圾"}, {"name": "塑膠布", "type": "一般垃圾"}, {"name": "塑膠拖把", "type": "一般垃圾"}, {"name": "塑膠掃把", "type": "一般垃圾"}, {"name": "塑膠掛勾", "type": "資源回收"}, {"name": "塑膠收納盒", "type": "資源回收"}, {"name": "塑膠文件夾", "type": "一般垃圾"}, {"name": "塑膠杯蓋", "type": "資源回收"}, {"name": "塑膠柄地板刷", "type": "一般垃圾"}, {"name": "塑膠柄浴室刷", "type": "一般垃圾"}, {"name": "塑膠柄玻璃刷", "type": "一般垃圾"}, {"name": "塑膠椅", "type": "資源回收"}, {"name": "塑膠氣泡紙", "type": "一般垃圾"}, {"name": "塑膠水杯", "type": "資源回收"}, {"name": "塑膠沙拉盒", "type": "資源回收"}, {"name": "塑膠泡殼", "type": "資源回收"}, {"name": "塑膠洗衣板", "type": "一般垃圾"}, {"name": "塑膠湯匙", "type": "一般垃圾"}, {"name": "塑膠玩具", "type": "一般垃圾"}, {"name": "塑膠珍珠板", "type": "一般垃圾"}, {"name": "塑膠瓦楞板", "type": "一般垃圾"}, {"name": "塑膠瓶蓋拉環", "type": "資源回收"}, {"name": "塑膠盆", "type": "資源回收"}, {"name": "塑膠盒", "type": "資源回收"}, {"name": "塑膠碗", "type": "資源回收"}, {"name": "塑膠碗蓋", "type": "資源回收"}, {"name": "塑膠籃", "type": "資源回收"}, {"name": "塑膠繩", "type": "一般垃圾"}, {"name": "塑膠膜", "type": "一般垃圾"}, {"name": "塑膠花盆", "type": "資源回收"}, {"name": "塑膠蔬果盒", "type": "資源回收"}, {"name": "塑膠製印台", "type": "一般垃圾"}, {"name": "塑膠製農藥容器", "type": "資源回收"}, {"name": "塑膠襯墊", "type": "資源回收"}, {"name": "塑膠資料櫃", "type": "資源回收"}, {"name": "塑膠軟氣槍彈", "type": "一般垃圾"}, {"name": "塑膠鉛筆盒", "type": "一般垃圾"}, {"name": "塑膠餐盒", "type": "資源回收"}, {"name": "塑膠餐盤", "type": "資源回收"}, {"name": "墊子", "type": "一般垃圾"}, {"name": "壁扇", "type": "資源回收"}, {"name": "壁掛式酒精消毒機", "type": "一般垃圾"}, {"name": "壁紙", "type": "一般垃圾"}, {"name": "壓克力板", "type": "一般垃圾"}, {"name": "壓力鍋", "type": "資源回收"}, {"name": "壓力電子鍋", "type": "資源回收"}, {"name": "壓力電鍋", "type": "資源回收"}, {"name": "壓縮袋", "type": "一般垃圾"}, {"name": "壘球手套", "type": "一般垃圾"}, {"name": "外套", "type": "資源回收"}, {"name": "大同電鍋", "type": "資源回收"}, {"name": "大型傳真機", "type": "資源回收"}, {"name": "大型多功能事務機", "type": "資源回收"}, {"name": "大型掃描機", "type": "資源回收"}, {"name": "大廈扇", "type": "資源回收"}, {"name": "大提琴", "type": "資源回收"}, {"name": "大聲公", "type": "一般垃圾"}, {"name": "大豆油", "type": "資源回收"}, {"name": "太陽能板", "type": "資源回收"}, {"name": "夾腳拖", "type": "一般垃圾"}, {"name": "奇異筆塑膠筆桿", "type": "一般垃圾"}, {"name": "奇異筆外殼筆桿", "type": "資源回收"}, {"name": "奶嘴", "type": "一般垃圾"}, {"name": "奶泡機", "type": "資源回收"}, {"name": "奶球盒", "type": "資源回收"}, {"name": "奶瓶", "type": "資源回收"}, {"name": "奶瓶消毒鍋", "type": "資源回收"}, {"name": "奶粉", "type": "廚餘"}, {"name": "奶粉罐", "type": "資源回收"}, {"name": "奶粉鐵罐", "type": "資源回收"}, {"name": "嬰兒衣服", "type": "資源回收"}, {"name": "嬰幼兒坐便器", "type": "一般垃圾"}, {"name": "嬰幼兒浴盆", "type": "資源回收"}, {"name": "安全帽", "type": "一般垃圾"}, {"name": "安全座椅", "type": "一般垃圾"}, {"name": "安定器內藏式螢光燈", "type": "資源回收"}, {"name": "定型燙睫毛器", "type": "資源回收"}, {"name": "宣傳單", "type": "資源回收"}, {"name": "家具白色保護袋", "type": "一般垃圾"}, {"name": "家具白色包裝袋", "type": "一般垃圾"}, {"name": "家用病毒檢測套組", "type": "一般垃圾"}, {"name": "家用飲水機", "type": "資源回收"}, {"name": "寵物便盆", "type": "一般垃圾"}, {"name": "寵物墊", "type": "一般垃圾"}, {"name": "寵物床", "type": "一般垃圾"}, {"name": "寵物循環活水機", "type": "一般垃圾"}, {"name": "寵物拉桿背包", "type": "一般垃圾"}, {"name": "寵物指甲剪", "type": "資源回收"}, {"name": "寵物智能飲水機", "type": "資源回收"}, {"name": "寵物用小電剪", "type": "資源回收"}, {"name": "寵物籠", "type": "資源回收"}, {"name": "寵物繩", "type": "一般垃圾"}, {"name": "寵物項圈", "type": "一般垃圾"}, {"name": "寶寶衣服", "type": "資源回收"}, {"name": "寶特瓶", "type": "資源回收"}, {"name": "寶特瓶蓋", "type": "資源回收"}, {"name": "封口機", "type": "資源回收"}, {"name": "封口邊料", "type": "一般垃圾"}, {"name": "封箱帶", "type": "資源回收"}, {"name": "導航機", "type": "資源回收"}, {"name": "小提琴", "type": "一般垃圾"}, {"name": "小星砂", "type": "一般垃圾"}, {"name": "小朋友學步車", "type": "一般垃圾"}, {"name": "小燈泡", "type": "資源回收"}, {"name": "小風扇", "type": "一般垃圾"}, {"name": "尼龍繩", "type": "一般垃圾"}, {"name": "崁燈", "type": "一般垃圾"}, {"name": "工地安全帽", "type": "一般垃圾"}, {"name": "巧克力", "type": "廚餘"}, {"name": "巧克力矽膠模具", "type": "一般垃圾"}, {"name": "布丁杯", "type": "資源回收"}, {"name": "布丁盒", "type": "資源回收"}, {"name": "布偶", "type": "一般垃圾"}, {"name": "布尺", "type": "一般垃圾"}, {"name": "布條", "type": "一般垃圾"}, {"name": "布米袋", "type": "一般垃圾"}, {"name": "帆布袋", "type": "一般垃圾"}, {"name": "帳篷", "type": "一般垃圾"}, {"name": "帽子", "type": "一般垃圾"}, {"name": "平底鍋", "type": "資源回收"}, {"name": "平板電腦", "type": "資源回收"}, {"name": "床單", "type": "一般垃圾"}, {"name": "床架", "type": "資源回收"}, {"name": "底片", "type": "一般垃圾"}, {"name": "底片捲", "type": "一般垃圾"}, {"name": "座充", "type": "資源回收"}, {"name": "座墊", "type": "一般垃圾"}, {"name": "康寧鍋(玻璃鍋)", "type": "資源回收"}, {"name": "康寶濃湯包裝袋", "type": "一般垃圾"}, {"name": "廚餘機產物", "type": "廚餘"}, {"name": "廢U型燈管", "type": "資源回收"}, {"name": "廢包裝用發泡塑膠", "type": "資源回收"}, {"name": "廢機車輪胎", "type": "資源回收"}, {"name": "廢潤滑油", "type": "資源回收"}, {"name": "廢玻璃", "type": "資源回收"}, {"name": "廢腳踏車輪胎", "type": "資源回收"}, {"name": "廢螺旋燈管", "type": "資源回收"}, {"name": "延長線", "type": "資源回收"}, {"name": "彩色塑膠球", "type": "一般垃圾"}, {"name": "彩色影印機", "type": "資源回收"}, {"name": "彩色筆塑膠筆桿", "type": "一般垃圾"}, {"name": "彩色筆外殼筆桿", "type": "資源回收"}, {"name": "影印機", "type": "資源回收"}, {"name": "影印紙", "type": "資源回收"}, {"name": "影音光碟機", "type": "資源回收"}, {"name": "循環扇", "type": "資源回收"}, {"name": "微波爐", "type": "資源回收"}, {"name": "微波餐盒", "type": "資源回收"}, {"name": "心電圖紙", "type": "一般垃圾"}, {"name": "快煮壺", "type": "資源回收"}, {"name": "快煮鍋", "type": "資源回收"}, {"name": "快篩試劑", "type": "一般垃圾"}, {"name": "快篩試紙", "type": "一般垃圾"}, {"name": "快遞物流袋", "type": "一般垃圾"}, {"name": "快鍋", "type": "資源回收"}, {"name": "悠遊卡", "type": "一般垃圾"}, {"name": "感應式螢光燈", "type": "資源回收"}, {"name": "感熱紙", "type": "一般垃圾"}, {"name": "懶人沙發椅", "type": "一般垃圾"}, {"name": "懶骨頭", "type": "一般垃圾"}, {"name": "懶骨頭填充發泡球", "type": "一般垃圾"}, {"name": "懸浮滑板", "type": "資源回收"}, {"name": "成藥罐", "type": "資源回收"}, {"name": "扇子", "type": "一般垃圾"}, {"name": "手套", "type": "一般垃圾"}, {"name": "手寫筆", "type": "資源回收"}, {"name": "手持式攪拌料理棒", "type": "資源回收"}, {"name": "手持摺疊風扇", "type": "一般垃圾"}, {"name": "手持電扇", "type": "一般垃圾"}, {"name": "手推車", "type": "資源回收"}, {"name": "手推車輪胎", "type": "一般垃圾"}, {"name": "手提吸塵器", "type": "資源回收"}, {"name": "手提帆布袋", "type": "一般垃圾"}, {"name": "手提環保袋", "type": "一般垃圾"}, {"name": "手搖飲料杯架", "type": "資源回收"}, {"name": "手機", "type": "資源回收"}, {"name": "手機殼", "type": "一般垃圾"}, {"name": "手電筒", "type": "資源回收"}, {"name": "打氣幫浦", "type": "資源回收"}, {"name": "打火機", "type": "一般垃圾"}, {"name": "打蛋器", "type": "一般垃圾"}, {"name": "投射燈", "type": "一般垃圾"}, {"name": "抗生素", "type": "資源回收"}, {"name": "抗癌藥", "type": "資源回收"}, {"name": "抗腫瘤藥", "type": "資源回收"}, {"name": "抱枕", "type": "一般垃圾"}, {"name": "抹布", "type": "一般垃圾"}, {"name": "抽油煙機", "type": "資源回收"}, {"name": "拋棄式刮鬍刀", "type": "一般垃圾"}, {"name": "拖把柄", "type": "資源回收"}, {"name": "拖把頭", "type": "一般垃圾"}, {"name": "拖鞋", "type": "一般垃圾"}, {"name": "拖鞋架", "type": "資源回收"}, {"name": "指甲剪", "type": "資源回收"}, {"name": "指甲油", "type": "一般垃圾"}, {"name": "按摩座墊", "type": "資源回收"}, {"name": "按摩梳", "type": "一般垃圾"}, {"name": "按摩椅墊", "type": "資源回收"}, {"name": "按摩槍、筋膜槍", "type": "資源回收"}, {"name": "按摩眼罩", "type": "資源回收"}, {"name": "按摩頸枕", "type": "資源回收"}, {"name": "捕蚊燈", "type": "資源回收"}, {"name": "捲尺", "type": "一般垃圾"}, {"name": "捲式牙線外盒", "type": "資源回收"}, {"name": "掃地機器人", "type": "資源回收"}, {"name": "掃把柄", "type": "資源回收"}, {"name": "掃把頭", "type": "一般垃圾"}, {"name": "掃拖機器人", "type": "資源回收"}, {"name": "掃描器", "type": "資源回收"}, {"name": "掃描機", "type": "資源回收"}, {"name": "掌上型電動玩具", "type": "一般垃圾"}, {"name": "推車", "type": "資源回收"}, {"name": "提款機列印單", "type": "一般垃圾"}, {"name": "摩卡咖啡壺", "type": "資源回收"}, {"name": "摺疊和室座椅", "type": "一般垃圾"}, {"name": "摺疊布收納箱", "type": "一般垃圾"}, {"name": "摺疊椅", "type": "資源回收"}, {"name": "摺疊矽膠餐具", "type": "一般垃圾"}, {"name": "摺疊躺椅", "type": "資源回收"}, {"name": "撥水矽膠雨刷", "type": "一般垃圾"}, {"name": "擦窗機器人", "type": "資源回收"}, {"name": "擴音器", "type": "一般垃圾"}, {"name": "擴香機", "type": "一般垃圾"}, {"name": "攜帶式保冷箱", "type": "一般垃圾"}, {"name": "收納箱", "type": "資源回收"}, {"name": "收納袋", "type": "一般垃圾"}, {"name": "收錄音機", "type": "資源回收"}, {"name": "文具三角板", "type": "資源回收"}, {"name": "文化用紙", "type": "資源回收"}, {"name": "料理夾", "type": "資源回收"}, {"name": "新鮮屋", "type": "資源回收"}, {"name": "旅充", "type": "資源回收"}, {"name": "旅行袋", "type": "一般垃圾"}, {"name": "日光燈管", "type": "資源回收"}, {"name": "日曆", "type": "資源回收"}, {"name": "易拉罐", "type": "資源回收"}, {"name": "易見夾", "type": "一般垃圾"}, {"name": "易開罐", "type": "資源回收"}, {"name": "時鐘", "type": "資源回收"}, {"name": "晒衣桿", "type": "資源回收"}, {"name": "智慧(能)手錶", "type": "一般垃圾"}, {"name": "智慧型手機", "type": "資源回收"}, {"name": "智慧穿戴裝置", "type": "一般垃圾"}, {"name": "智能酒精自動感應噴霧機", "type": "一般垃圾"}, {"name": "晾衣夾", "type": "資源回收"}, {"name": "暖暖包", "type": "一般垃圾"}, {"name": "暖氣機", "type": "資源回收"}, {"name": "曬衣夾", "type": "資源回收"}, {"name": "曬衣桿", "type": "資源回收"}, {"name": "曬衣竹竿", "type": "一般垃圾"}, {"name": "書", "type": "資源回收"}, {"name": "書包", "type": "一般垃圾"}, {"name": "書報", "type": "資源回收"}, {"name": "書套", "type": "一般垃圾"}, {"name": "書本", "type": "資源回收"}, {"name": "書法水寫布", "type": "一般垃圾"}, {"name": "書籍", "type": "資源回收"}, {"name": "月曆", "type": "資源回收"}, {"name": "有線吸塵器", "type": "資源回收"}, {"name": "木柄拖把", "type": "一般垃圾"}, {"name": "木柄掃把", "type": "一般垃圾"}, {"name": "木炭", "type": "一般垃圾"}, {"name": "木片便當盒", "type": "一般垃圾"}, {"name": "木竹片", "type": "一般垃圾"}, {"name": "木製棒球棒", "type": "一般垃圾"}, {"name": "木質砧板", "type": "一般垃圾"}, {"name": "木頭洗衣板", "type": "一般垃圾"}, {"name": "木頭踏板", "type": "一般垃圾"}, {"name": "未燒製陶土", "type": "一般垃圾"}, {"name": "杯套", "type": "資源回收"}, {"name": "板擦", "type": "一般垃圾"}, {"name": "枕套", "type": "一般垃圾"}, {"name": "枕頭", "type": "一般垃圾"}, {"name": "枕頭套", "type": "一般垃圾"}, {"name": "果凍飲袋", "type": "一般垃圾"}, {"name": "果核", "type": "一般垃圾"}, {"name": "果汁機", "type": "資源回收"}, {"name": "果醬", "type": "廚餘"}, {"name": "果醬罐", "type": "資源回收"}, {"name": "染髮劑瓶", "type": "資源回收"}, {"name": "柚子皮", "type": "廚餘"}, {"name": "核桃仁", "type": "廚餘"}, {"name": "根莖葉蔬菜", "type": "廚餘"}, {"name": "桌上型燙衣板", "type": "一般垃圾"}, {"name": "桌上型複合事務印表機", "type": "資源回收"}, {"name": "桌上型複合事務影印機", "type": "資源回收"}, {"name": "桌墊", "type": "資源回收"}, {"name": "桌巾", "type": "一般垃圾"}, {"name": "桌布", "type": "一般垃圾"}, {"name": "桌扇", "type": "資源回收"}, {"name": "棉線", "type": "一般垃圾"}, {"name": "棉被", "type": "一般垃圾"}, {"name": "棉被套袋", "type": "一般垃圾"}, {"name": "棒壘手套", "type": "一般垃圾"}, {"name": "棒球", "type": "一般垃圾"}, {"name": "棒球手套", "type": "一般垃圾"}, {"name": "棒球棒", "type": "資源回收"}, {"name": "植物種子", "type": "廚餘"}, {"name": "植物纖維容器", "type": "資源回收"}, {"name": "椰子殼", "type": "一般垃圾"}, {"name": "榨汁機", "type": "資源回收"}, {"name": "榴槤皮", "type": "一般垃圾"}, {"name": "樂器", "type": "資源回收"}, {"name": "標籤貼紙", "type": "一般垃圾"}, {"name": "模型公仔", "type": "一般垃圾"}, {"name": "樹枝", "type": "一般垃圾"}, {"name": "樹脂", "type": "一般垃圾"}, {"name": "樹葉", "type": "廚餘"}, {"name": "橄欖油", "type": "資源回收"}, {"name": "橄欖油罐", "type": "資源回收"}, {"name": "機械型手錶", "type": "一般垃圾"}, {"name": "機油", "type": "資源回收"}, {"name": "機車車殼", "type": "一般垃圾"}, {"name": "橡皮擦", "type": "一般垃圾"}, {"name": "橡皮筋", "type": "一般垃圾"}, {"name": "橡膠砧板", "type": "一般垃圾"}, {"name": "橡膠管", "type": "一般垃圾"}, {"name": "檔案夾", "type": "一般垃圾"}, {"name": "檯燈", "type": "資源回收"}, {"name": "欄杆", "type": "資源回收"}, {"name": "止汗制臭劑瓶", "type": "資源回收"}, {"name": "止滑墊", "type": "一般垃圾"}, {"name": "殺蟑劑罐", "type": "資源回收"}, {"name": "殺蟲劑罐", "type": "資源回收"}, {"name": "比薩盒", "type": "資源回收"}, {"name": "毛巾", "type": "一般垃圾"}, {"name": "毛線", "type": "一般垃圾"}, {"name": "氣泡布", "type": "一般垃圾"}, {"name": "氣泡水機", "type": "資源回收"}, {"name": "氣泡膜", "type": "一般垃圾"}, {"name": "氣炸鍋", "type": "資源回收"}, {"name": "氣血循環機", "type": "資源回收"}, {"name": "氣體鋼瓶", "type": "資源回收"}, {"name": "水冷扇", "type": "資源回收"}, {"name": "水彩筆", "type": "一般垃圾"}, {"name": "水晶土", "type": "一般垃圾"}, {"name": "水晶寶寶", "type": "一般垃圾"}, {"name": "水晶洞", "type": "一般垃圾"}, {"name": "水晶球擺飾", "type": "一般垃圾"}, {"name": "水晶球音樂盒", "type": "一般垃圾"}, {"name": "水晶石", "type": "一般垃圾"}, {"name": "水果", "type": "廚餘"}, {"name": "水果泡棉", "type": "一般垃圾"}, {"name": "水果盒", "type": "資源回收"}, {"name": "水果網袋", "type": "一般垃圾"}, {"name": "水果醋飲袋", "type": "一般垃圾"}, {"name": "水桶", "type": "資源回收"}, {"name": "水槽", "type": "資源回收"}, {"name": "水氧機", "type": "一般垃圾"}, {"name": "水波爐", "type": "資源回收"}, {"name": "水煙式殺蟲劑", "type": "資源回收"}, {"name": "水蒸式滅蹣滅蟑劑", "type": "資源回收"}, {"name": "水銀燈泡", "type": "資源回收"}, {"name": "水龍頭", "type": "資源回收"}, {"name": "汽機車坐墊", "type": "一般垃圾"}, {"name": "汽水罐", "type": "資源回收"}, {"name": "汽車", "type": "資源回收"}, {"name": "汽車晴雨窗", "type": "一般垃圾"}, {"name": "汽車行車記錄器", "type": "資源回收"}, {"name": "沐浴乳瓶", "type": "資源回收"}, {"name": "沙拉油", "type": "資源回收"}, {"name": "沙拉油瓶", "type": "資源回收"}, {"name": "沙發坐墊", "type": "一般垃圾"}, {"name": "沙發椅墊", "type": "一般垃圾"}, {"name": "油漆", "type": "一般垃圾"}, {"name": "油漆桶罐", "type": "資源回收"}, {"name": "油漆罐", "type": "資源回收"}, {"name": "油畫布", "type": "一般垃圾"}, {"name": "泡棉", "type": "一般垃圾"}, {"name": "泡棉珍珠板", "type": "一般垃圾"}, {"name": "泡沫紅茶杯", "type": "資源回收"}, {"name": "泡泡紙", "type": "一般垃圾"}, {"name": "泡粒", "type": "一般垃圾"}, {"name": "泡腳機", "type": "資源回收"}, {"name": "泡麵紙碗", "type": "資源回收"}, {"name": "泡麵綜合包外層袋", "type": "一般垃圾"}, {"name": "泡麵袋", "type": "一般垃圾"}, {"name": "注射液點滴瓶", "type": "資源回收"}, {"name": "泳衣", "type": "一般垃圾"}, {"name": "泳裝", "type": "一般垃圾"}, {"name": "泳褲", "type": "一般垃圾"}, {"name": "洋芋片包裝袋", "type": "一般垃圾"}, {"name": "洋裝", "type": "資源回收"}, {"name": "洗手台", "type": "資源回收"}, {"name": "洗臉機", "type": "資源回收"}, {"name": "洗衣店套袋", "type": "一般垃圾"}, {"name": "洗衣機", "type": "資源回收"}, {"name": "洗衣籃", "type": "資源回收"}, {"name": "洗衣精補充包", "type": "一般垃圾"}, {"name": "洗衣網", "type": "一般垃圾"}, {"name": "洗衣袋", "type": "一般垃圾"}, {"name": "洗面乳軟管", "type": "資源回收"}, {"name": "洗髮乳", "type": "資源回收"}, {"name": "洗髮精", "type": "資源回收"}, {"name": "洗髮霜瓶", "type": "資源回收"}, {"name": "活動式洗手槽", "type": "資源回收"}, {"name": "活性碳", "type": "一般垃圾"}, {"name": "浮板", "type": "一般垃圾"}, {"name": "浴室刷柄", "type": "資源回收"}, {"name": "浴巾", "type": "一般垃圾"}, {"name": "浴用熱水器", "type": "資源回收"}, {"name": "浴簾", "type": "一般垃圾"}, {"name": "浴簾桿", "type": "資源回收"}, {"name": "海灘墊", "type": "一般垃圾"}, {"name": "海綿", "type": "一般垃圾"}, {"name": "消防水帶", "type": "資源回收"}, {"name": "消防泡沫原液桶", "type": "資源回收"}, {"name": "淨水器濾心", "type": "一般垃圾"}, {"name": "清潔劑瓶", "type": "資源回收"}, {"name": "游泳圈", "type": "一般垃圾"}, {"name": "湯匙", "type": "資源回收"}, {"name": "溜冰鞋", "type": "一般垃圾"}, {"name": "溫熱按摩枕", "type": "資源回收"}, {"name": "滅火器", "type": "資源回收"}, {"name": "滑板", "type": "一般垃圾"}, {"name": "滑鼠", "type": "資源回收"}, {"name": "滑鼠墊", "type": "一般垃圾"}, {"name": "漂白水容器", "type": "資源回收"}, {"name": "漢堡紙盒", "type": "資源回收"}, {"name": "潤髮乳瓶", "type": "資源回收"}, {"name": "濕拖吸塵器", "type": "資源回收"}, {"name": "濕紙巾外包裝袋", "type": "一般垃圾"}, {"name": "濾水濾心", "type": "一般垃圾"}, {"name": "濾褂袋", "type": "一般垃圾"}, {"name": "炮竹", "type": "一般垃圾"}, {"name": "炸雞桶", "type": "資源回收"}, {"name": "烘乾機", "type": "資源回收"}, {"name": "烘碗機", "type": "資源回收"}, {"name": "烘衣機", "type": "資源回收"}, {"name": "烘被機", "type": "資源回收"}, {"name": "烤土司機", "type": "資源回收"}, {"name": "烤箱", "type": "資源回收"}, {"name": "烤網", "type": "資源回收"}, {"name": "烤肉網", "type": "資源回收"}, {"name": "烹煮熟肉", "type": "廚餘"}, {"name": "無線吸塵器", "type": "資源回收"}, {"name": "無線對講機", "type": "資源回收"}, {"name": "無線耳機", "type": "資源回收"}, {"name": "無線電對講機", "type": "資源回收"}, {"name": "無葉扇", "type": "資源回收"}, {"name": "煤油燈", "type": "資源回收"}, {"name": "照片紙", "type": "一般垃圾"}, {"name": "煮水壺", "type": "資源回收"}, {"name": "熟食類廚餘", "type": "廚餘"}, {"name": "熨斗", "type": "資源回收"}, {"name": "熱壓土司機", "type": "資源回收"}, {"name": "熱感應紙", "type": "一般垃圾"}, {"name": "熱水瓶", "type": "資源回收"}, {"name": "燃料膏", "type": "一般垃圾"}, {"name": "燃油機車", "type": "資源回收"}, {"name": "燈", "type": "一般垃圾"}, {"name": "燈具", "type": "資源回收"}, {"name": "燈籠燈泡", "type": "一般垃圾"}, {"name": "燈飾", "type": "一般垃圾"}, {"name": "燒水壺", "type": "資源回收"}, {"name": "燙髮劑瓶", "type": "資源回收"}, {"name": "爆米花桶", "type": "資源回收"}, {"name": "爵士鼓", "type": "資源回收"}, {"name": "牙刷", "type": "一般垃圾"}, {"name": "牙刷包裝", "type": "資源回收"}, {"name": "牙刷塑膠外殼", "type": "資源回收"}, {"name": "牙刷蓋", "type": "資源回收"}, {"name": "牙籤", "type": "一般垃圾"}, {"name": "牙線", "type": "一般垃圾"}, {"name": "牙線棒", "type": "一般垃圾"}, {"name": "牙線盒", "type": "資源回收"}, {"name": "牙膏軟管", "type": "資源回收"}, {"name": "牛仔褲", "type": "資源回收"}, {"name": "牛奶瓶", "type": "資源回收"}, {"name": "牛奶盒", "type": "資源回收"}, {"name": "牛油", "type": "廚餘"}, {"name": "牡蠣殼", "type": "一般垃圾"}, {"name": "特殊藥物", "type": "資源回收"}, {"name": "狗便", "type": "一般垃圾"}, {"name": "獎座", "type": "一般垃圾"}, {"name": "獎盃", "type": "一般垃圾"}, {"name": "玉珮", "type": "一般垃圾"}, {"name": "玉米外葉皮", "type": "一般垃圾"}, {"name": "玩具包裝外罩", "type": "資源回收"}, {"name": "玩具車輪胎", "type": "一般垃圾"}, {"name": "玻璃刷柄", "type": "資源回收"}, {"name": "玻璃容器", "type": "資源回收"}, {"name": "玻璃杯", "type": "資源回收"}, {"name": "玻璃瓶", "type": "資源回收"}, {"name": "玻璃盤", "type": "資源回收"}, {"name": "玻璃碗", "type": "資源回收"}, {"name": "玻璃纖維FRP物品", "type": "一般垃圾"}, {"name": "玻璃鍋", "type": "資源回收"}, {"name": "玻璃鍋蓋", "type": "資源回收"}, {"name": "珪藻土地墊", "type": "一般垃圾"}, {"name": "珪藻土物品", "type": "一般垃圾"}, {"name": "球桿", "type": "資源回收"}, {"name": "球類", "type": "一般垃圾"}, {"name": "瑜珈墊", "type": "一般垃圾"}, {"name": "環保拋棄式馬桶座墊", "type": "一般垃圾"}, {"name": "環保矽膠耐冷耐熱食物保鮮密封袋", "type": "一般垃圾"}, {"name": "環境消毒藥空瓶", "type": "資源回收"}, {"name": "環管日光燈", "type": "資源回收"}, {"name": "瓜子仁", "type": "廚餘"}, {"name": "瓜子殼", "type": "廚餘"}, {"name": "瓦斯爐", "type": "資源回收"}, {"name": "瓦斯鋼瓶", "type": "資源回收"}, {"name": "瓦楞紙抓板", "type": "資源回收"}, {"name": "瓦楞紙箱", "type": "資源回收"}, {"name": "瓶蓋", "type": "資源回收"}, {"name": "瓷器茶壺", "type": "一般垃圾"}, {"name": "甘蔗纖維吸管", "type": "一般垃圾"}, {"name": "生理緩衝液瓶", "type": "資源回收"}, {"name": "生理食鹽水瓶", "type": "資源回收"}, {"name": "生菜心", "type": "廚餘"}, {"name": "生菜葉", "type": "廚餘"}, {"name": "生鮮托盤", "type": "一般垃圾"}, {"name": "畚斗", "type": "資源回收"}, {"name": "畚箕", "type": "資源回收"}, {"name": "番薯粉", "type": "廚餘"}, {"name": "畫凳", "type": "一般垃圾"}, {"name": "畫夾", "type": "一般垃圾"}, {"name": "畫板", "type": "一般垃圾"}, {"name": "畫架", "type": "一般垃圾"}, {"name": "畫袋", "type": "一般垃圾"}, {"name": "發霉食品", "type": "廚餘"}, {"name": "白板", "type": "一般垃圾"}, {"name": "白板筆塑膠筆桿", "type": "一般垃圾"}, {"name": "白板筆外殼筆桿", "type": "資源回收"}, {"name": "白熾燈泡", "type": "資源回收"}, {"name": "白飯", "type": "廚餘"}, {"name": "百葉窗", "type": "一般垃圾"}, {"name": "皮包", "type": "一般垃圾"}, {"name": "皮帶", "type": "一般垃圾"}, {"name": "皮衣", "type": "資源回收"}, {"name": "皮褲", "type": "資源回收"}, {"name": "盆子", "type": "資源回收"}, {"name": "監視器", "type": "資源回收"}, {"name": "直排輪", "type": "一般垃圾"}, {"name": "直笛", "type": "一般垃圾"}, {"name": "直管日光燈", "type": "資源回收"}, {"name": "直管日光燈燈座", "type": "資源回收"}, {"name": "相框", "type": "一般垃圾"}, {"name": "相機", "type": "資源回收"}, {"name": "相機腳架、腳架", "type": "一般垃圾"}, {"name": "相片紙", "type": "一般垃圾"}, {"name": "省電燈泡", "type": "資源回收"}, {"name": "眉筆", "type": "一般垃圾"}, {"name": "真空保鮮機", "type": "資源回收"}, {"name": "眼影", "type": "一般垃圾"}, {"name": "眼膠瓶罐", "type": "資源回收"}, {"name": "眼部按摩器", "type": "資源回收"}, {"name": "眼鏡", "type": "一般垃圾"}, {"name": "眼鏡盒", "type": "一般垃圾"}, {"name": "眼霜瓶罐", "type": "資源回收"}, {"name": "睡衣", "type": "一般垃圾"}, {"name": "睫毛膏", "type": "一般垃圾"}, {"name": "短裙", "type": "資源回收"}, {"name": "石敢當", "type": "一般垃圾"}, {"name": "石膏像", "type": "一般垃圾"}, {"name": "石雕", "type": "一般垃圾"}, {"name": "石頭", "type": "一般垃圾"}, {"name": "矽利康", "type": "一般垃圾"}, {"name": "矽利康空瓶", "type": "一般垃圾"}, {"name": "矽膠吸管", "type": "一般垃圾"}, {"name": "矽膠手機殼", "type": "一般垃圾"}, {"name": "矽膠手環", "type": "一般垃圾"}, {"name": "矽膠折疊杯", "type": "一般垃圾"}, {"name": "矽膠摺疊保鮮盒", "type": "一般垃圾"}, {"name": "矽膠攪拌刮刀", "type": "一般垃圾"}, {"name": "矽膠杯蓋", "type": "一般垃圾"}, {"name": "矽膠耳塞", "type": "一般垃圾"}, {"name": "矽膠造型模具", "type": "一般垃圾"}, {"name": "矽膠錶帶", "type": "一般垃圾"}, {"name": "矽膠鍋鏟", "type": "一般垃圾"}, {"name": "矽膠鍵盤保護膜", "type": "一般垃圾"}, {"name": "矽膠鞋", "type": "一般垃圾"}, {"name": "矽膠食物容器", "type": "一般垃圾"}, {"name": "矽藻土粉", "type": "一般垃圾"}, {"name": "砂紙", "type": "一般垃圾"}, {"name": "砧板", "type": "資源回收"}, {"name": "破壁機", "type": "資源回收"}, {"name": "破損衣服", "type": "一般垃圾"}, {"name": "硬式磁碟機", "type": "資源回收"}, {"name": "硬殼類生物", "type": "一般垃圾"}, {"name": "硬質果皮心", "type": "一般垃圾"}, {"name": "碎布", "type": "一般垃圾"}, {"name": "碎玻璃", "type": "資源回收"}, {"name": "碎紙機", "type": "資源回收"}, {"name": "碳粉匣", "type": "資源回收"}, {"name": "碳素電暖器", "type": "資源回收"}, {"name": "碳纖維球拍", "type": "一般垃圾"}, {"name": "碳鋅電池", "type": "資源回收"}, {"name": "磁扣", "type": "一般垃圾"}, {"name": "磁鐵", "type": "一般垃圾"}, {"name": "磨豆機", "type": "資源回收"}, {"name": "礦泉水瓶", "type": "資源回收"}, {"name": "福隆便當紙盒", "type": "資源回收"}, {"name": "空氣淨化器", "type": "資源回收"}, {"name": "空氣清淨機", "type": "資源回收"}, {"name": "空氣清淨機濾網", "type": "一般垃圾"}, {"name": "窗扇", "type": "資源回收"}, {"name": "窗簾", "type": "一般垃圾"}, {"name": "窗簾桿", "type": "資源回收"}, {"name": "竉物外出包", "type": "一般垃圾"}, {"name": "竉物背包", "type": "一般垃圾"}, {"name": "立可帶外殼", "type": "資源回收"}, {"name": "立可白瓶", "type": "一般垃圾"}, {"name": "立扇", "type": "資源回收"}, {"name": "童軍繩", "type": "一般垃圾"}, {"name": "竹柄拖把", "type": "一般垃圾"}, {"name": "竹柄掃把", "type": "一般垃圾"}, {"name": "竹牙刷", "type": "一般垃圾"}, {"name": "竹筍殼", "type": "一般垃圾"}, {"name": "竹籃", "type": "一般垃圾"}, {"name": "竹籤", "type": "一般垃圾"}, {"name": "竹蓆床墊", "type": "一般垃圾"}, {"name": "竹蓆椅墊", "type": "一般垃圾"}, {"name": "笛音壺", "type": "資源回收"}, {"name": "筆記型電腦", "type": "資源回收"}, {"name": "筆記書紙", "type": "資源回收"}, {"name": "筆記本", "type": "資源回收"}, {"name": "筒型鹼錳電池", "type": "資源回收"}, {"name": "管制藥", "type": "資源回收"}, {"name": "米糧", "type": "廚餘"}, {"name": "米袋", "type": "一般垃圾"}, {"name": "粉底液", "type": "一般垃圾"}, {"name": "粉底液瓶罐", "type": "資源回收"}, {"name": "粉底霜瓶罐", "type": "資源回收"}, {"name": "粉末狀可食品", "type": "廚餘"}, {"name": "粉蠟筆", "type": "一般垃圾"}, {"name": "粉餅", "type": "一般垃圾"}, {"name": "粽子葉", "type": "一般垃圾"}, {"name": "粽葉", "type": "一般垃圾"}, {"name": "糖果", "type": "廚餘"}, {"name": "糖果包裝紙", "type": "一般垃圾"}, {"name": "糖果罐", "type": "資源回收"}, {"name": "紅外線加熱器", "type": "資源回收"}, {"name": "紅外線燈泡", "type": "一般垃圾"}, {"name": "純紙漿成品", "type": "資源回收"}, {"name": "紗窗紗網", "type": "一般垃圾"}, {"name": "紙便當盒", "type": "資源回收"}, {"name": "紙容器", "type": "資源回收"}, {"name": "紙尿布", "type": "一般垃圾"}, {"name": "紙尿片", "type": "一般垃圾"}, {"name": "紙尿褲", "type": "一般垃圾"}, {"name": "紙本電子發票", "type": "一般垃圾"}, {"name": "紙杯", "type": "資源回收"}, {"name": "紙板", "type": "資源回收"}, {"name": "紙漿模塑包材", "type": "資源回收"}, {"name": "紙碗", "type": "資源回收"}, {"name": "紙箱", "type": "資源回收"}, {"name": "紙袋", "type": "資源回收"}, {"name": "紙製免洗餐具", "type": "資源回收"}, {"name": "紙製平板容器", "type": "資源回收"}, {"name": "紙製糖果禮盒", "type": "資源回收"}, {"name": "紙製茶葉罐", "type": "資源回收"}, {"name": "紙製速食容器", "type": "資源回收"}, {"name": "紙錢", "type": "一般垃圾"}, {"name": "紙類", "type": "資源回收"}, {"name": "紙餐具", "type": "資源回收"}, {"name": "紙餐盒", "type": "資源回收"}, {"name": "紫黑管", "type": "一般垃圾"}, {"name": "組合式地墊", "type": "一般垃圾"}, {"name": "組合式電動自行車電池", "type": "資源回收"}, {"name": "組合收納櫃卡扣", "type": "資源回收"}, {"name": "組合收納櫃隔板", "type": "資源回收"}, {"name": "結晶鹽", "type": "一般垃圾"}, {"name": "給皂機", "type": "一般垃圾"}, {"name": "絨毛娃娃", "type": "一般垃圾"}, {"name": "絨毛玩具", "type": "一般垃圾"}, {"name": "絲襪", "type": "一般垃圾"}, {"name": "網球拍", "type": "資源回收"}, {"name": "網購破壞袋", "type": "一般垃圾"}, {"name": "網路線", "type": "一般垃圾"}, {"name": "緊密型螢光燈", "type": "資源回收"}, {"name": "緞帶", "type": "一般垃圾"}, {"name": "緩衝粒料", "type": "一般垃圾"}, {"name": "縫針", "type": "一般垃圾"}, {"name": "罐頭食品內容物", "type": "廚餘"}, {"name": "置物架", "type": "資源回收"}, {"name": "置物網", "type": "資源回收"}, {"name": "美容儀", "type": "資源回收"}, {"name": "美耐皿餐具", "type": "一般垃圾"}, {"name": "羽球拍", "type": "資源回收"}, {"name": "耐熱矽膠刷", "type": "一般垃圾"}, {"name": "耐熱餐盒", "type": "資源回收"}, {"name": "耳機", "type": "資源回收"}, {"name": "耳溫槍", "type": "資源回收"}, {"name": "耳罩", "type": "一般垃圾"}, {"name": "聖誕燈飾", "type": "一般垃圾"}, {"name": "肉骨頭", "type": "一般垃圾"}, {"name": "肥皂盒", "type": "資源回收"}, {"name": "背包", "type": "一般垃圾"}, {"name": "能量果凍汁袋", "type": "一般垃圾"}, {"name": "脫水機", "type": "資源回收"}, {"name": "腕錶", "type": "一般垃圾"}, {"name": "腮紅", "type": "一般垃圾"}, {"name": "腰帶", "type": "一般垃圾"}, {"name": "腳底按摩機", "type": "資源回收"}, {"name": "腳踏墊", "type": "一般垃圾"}, {"name": "腳踏車", "type": "資源回收"}, {"name": "腹膜透析藥水空袋", "type": "一般垃圾"}, {"name": "腿部按摩機", "type": "資源回收"}, {"name": "膠囊", "type": "一般垃圾"}, {"name": "膠囊咖啡", "type": "資源回收"}, {"name": "膠帶", "type": "一般垃圾"}, {"name": "膠水瓶", "type": "資源回收"}, {"name": "自動鉛筆塑膠筆桿", "type": "一般垃圾"}, {"name": "自動鉛筆筆芯", "type": "一般垃圾"}, {"name": "自我快速檢測套組", "type": "一般垃圾"}, {"name": "自行車", "type": "資源回收"}, {"name": "舒服多", "type": "一般垃圾"}, {"name": "舒美袋(布)", "type": "一般垃圾"}, {"name": "舒肥機", "type": "資源回收"}, {"name": "花土", "type": "一般垃圾"}, {"name": "花材", "type": "廚餘"}, {"name": "花生殼", "type": "廚餘"}, {"name": "花生油", "type": "資源回收"}, {"name": "花菜", "type": "廚餘"}, {"name": "苦茶油", "type": "資源回收"}, {"name": "茶渣", "type": "廚餘"}, {"name": "茶籽油", "type": "資源回收"}, {"name": "茶葉包裝袋", "type": "一般垃圾"}, {"name": "茶葉罐", "type": "資源回收"}, {"name": "草本植物", "type": "廚餘"}, {"name": "草蓆床墊", "type": "一般垃圾"}, {"name": "草蓆椅墊", "type": "一般垃圾"}, {"name": "荷爾蒙藥", "type": "資源回收"}, {"name": "菜刀刀身", "type": "資源回收"}, {"name": "菱角殼", "type": "廚餘"}, {"name": "菸盒", "type": "資源回收"}, {"name": "萬年網", "type": "一般垃圾"}, {"name": "萬用網", "type": "一般垃圾"}, {"name": "萬能網", "type": "一般垃圾"}, {"name": "葉片式電暖器", "type": "資源回收"}, {"name": "葉菜", "type": "廚餘"}, {"name": "葡萄籽油", "type": "資源回收"}, {"name": "葵花油", "type": "資源回收"}, {"name": "蒸氣熱敷眼罩", "type": "一般垃圾"}, {"name": "蒸氣護髮機", "type": "資源回收"}, {"name": "蒸汽掛燙機", "type": "資源回收"}, {"name": "蒸籠", "type": "資源回收"}, {"name": "蓮蓬頭", "type": "資源回收"}, {"name": "蔬果包裝袋", "type": "一般垃圾"}, {"name": "蔬菜菜籽", "type": "廚餘"}, {"name": "薯條盒", "type": "資源回收"}, {"name": "藍芽喇叭", "type": "資源回收"}, {"name": "藍芽耳機", "type": "資源回收"}, {"name": "藥水", "type": "一般垃圾"}, {"name": "藥水袋", "type": "一般垃圾"}, {"name": "蘋果皮", "type": "廚餘"}, {"name": "處方藥罐", "type": "資源回收"}, {"name": "蚊帳", "type": "一般垃圾"}, {"name": "蚊香", "type": "一般垃圾"}, {"name": "蚊香罐", "type": "資源回收"}, {"name": "蛋殼", "type": "廚餘"}, {"name": "蛋盒", "type": "資源回收"}, {"name": "蛤蜊殼", "type": "一般垃圾"}, {"name": "螃蟹殼", "type": "一般垃圾"}, {"name": "螃蟹車", "type": "一般垃圾"}, {"name": "螢光筆塑膠筆桿", "type": "一般垃圾"}, {"name": "螢幕", "type": "資源回收"}, {"name": "蟑螂屋", "type": "一般垃圾"}, {"name": "蠟燭", "type": "一般垃圾"}, {"name": "蠟燭罐", "type": "資源回收"}, {"name": "蠟筆", "type": "一般垃圾"}, {"name": "蠟紙", "type": "一般垃圾"}, {"name": "行充", "type": "資源回收"}, {"name": "行動冰桶", "type": "一般垃圾"}, {"name": "行動電源", "type": "資源回收"}, {"name": "行動電話", "type": "資源回收"}, {"name": "行裏箱矽膠吊牌", "type": "一般垃圾"}, {"name": "行車紀錄器", "type": "資源回收"}, {"name": "衛浴設備", "type": "一般垃圾"}, {"name": "衛生棉", "type": "一般垃圾"}, {"name": "衛生棉包裝袋", "type": "一般垃圾"}, {"name": "衛生棉條包裝袋", "type": "一般垃圾"}, {"name": "衛生紙", "type": "一般垃圾"}, {"name": "衛生紙包裝袋", "type": "一般垃圾"}, {"name": "衛生紙滾筒", "type": "資源回收"}, {"name": "衝浪板", "type": "一般垃圾"}, {"name": "衣夾", "type": "一般垃圾"}, {"name": "衣架", "type": "資源回收"}, {"name": "衣物收納袋", "type": "一般垃圾"}, {"name": "裝飾燈條", "type": "一般垃圾"}, {"name": "複合材質塑膠袋", "type": "一般垃圾"}, {"name": "複寫紙", "type": "一般垃圾"}, {"name": "褲子", "type": "資源回收"}, {"name": "襪子", "type": "一般垃圾"}, {"name": "西裝", "type": "資源回收"}, {"name": "觸控筆", "type": "資源回收"}, {"name": "計時器", "type": "資源回收"}, {"name": "計算機", "type": "資源回收"}, {"name": "記憶卡", "type": "一般垃圾"}, {"name": "調味品", "type": "廚餘"}, {"name": "調味料", "type": "廚餘"}, {"name": "調味粉", "type": "廚餘"}, {"name": "調味罐", "type": "資源回收"}, {"name": "調味醬", "type": "一般垃圾"}, {"name": "護手霜瓶罐", "type": "資源回收"}, {"name": "護手霜軟管", "type": "資源回收"}, {"name": "護貝紙", "type": "一般垃圾"}, {"name": "護貝膠膜", "type": "一般垃圾"}, {"name": "護足霜瓶罐", "type": "資源回收"}, {"name": "護足霜軟管", "type": "資源回收"}, {"name": "護髮乳", "type": "資源回收"}, {"name": "護髮霜瓶", "type": "資源回收"}, {"name": "豆渣", "type": "廚餘"}, {"name": "豆漿機", "type": "資源回收"}, {"name": "豆腐", "type": "廚餘"}, {"name": "豆花", "type": "廚餘"}, {"name": "豆製品", "type": "廚餘"}, {"name": "象棋", "type": "一般垃圾"}, {"name": "豬油", "type": "廚餘"}, {"name": "貓抓板", "type": "資源回收"}, {"name": "貓抓窩", "type": "資源回收"}, {"name": "貓毛", "type": "一般垃圾"}, {"name": "貓砂", "type": "一般垃圾"}, {"name": "貓飼料", "type": "廚餘"}, {"name": "貝殼", "type": "一般垃圾"}, {"name": "貼紙底襯", "type": "一般垃圾"}, {"name": "資料夾", "type": "一般垃圾"}, {"name": "購物紙袋", "type": "資源回收"}, {"name": "路由器", "type": "資源回收"}, {"name": "踏步機", "type": "資源回收"}, {"name": "軌道燈", "type": "一般垃圾"}, {"name": "軟布類鉛筆盒", "type": "一般垃圾"}, {"name": "軟殼布面旅行箱", "type": "一般垃圾"}, {"name": "軟殼布面行李箱", "type": "一般垃圾"}, {"name": "軟殼類(蝦殼)", "type": "廚餘"}, {"name": "軟片盒", "type": "資源回收"}, {"name": "軟質果皮", "type": "廚餘"}, {"name": "輔具", "type": "資源回收"}, {"name": "輕便雨衣", "type": "一般垃圾"}, {"name": "輸液(套)管", "type": "一般垃圾"}, {"name": "轉印紙", "type": "一般垃圾"}, {"name": "農藥", "type": "一般垃圾"}, {"name": "迷你對講機", "type": "資源回收"}, {"name": "逃生指示照明燈具", "type": "一般垃圾"}, {"name": "透明夾", "type": "一般垃圾"}, {"name": "透明瓶桶罐", "type": "資源回收"}, {"name": "透明資料袋", "type": "資源回收"}, {"name": "逗貓激光筆", "type": "資源回收"}, {"name": "通風扇", "type": "資源回收"}, {"name": "運動手錶", "type": "一般垃圾"}, {"name": "過期藥丸", "type": "一般垃圾"}, {"name": "過期食品", "type": "廚餘"}, {"name": "遙控器", "type": "資源回收"}, {"name": "選舉旗幟", "type": "一般垃圾"}, {"name": "選舉背心", "type": "一般垃圾"}, {"name": "酒瓶", "type": "資源回收"}, {"name": "酒精槍", "type": "一般垃圾"}, {"name": "酒精消毒噴霧器", "type": "一般垃圾"}, {"name": "酒精膏", "type": "一般垃圾"}, {"name": "酒精自動感應噴霧機", "type": "一般垃圾"}, {"name": "醫師藥師指示用藥罐", "type": "資源回收"}, {"name": "醬料罐", "type": "資源回收"}, {"name": "醬油", "type": "一般垃圾"}, {"name": "醬油瓶蓋拉環", "type": "資源回收"}, {"name": "醬菜瓶", "type": "資源回收"}, {"name": "野餐墊", "type": "一般垃圾"}, {"name": "金桶", "type": "資源回收"}, {"name": "金爐", "type": "資源回收"}, {"name": "金紙", "type": "一般垃圾"}, {"name": "金紙灰", "type": "一般垃圾"}, {"name": "釘書機", "type": "資源回收"}, {"name": "針劑", "type": "資源回收"}, {"name": "釣魚冰箱", "type": "一般垃圾"}, {"name": "鈕釦型鋰電池", "type": "資源回收"}, {"name": "鈕釦型電池", "type": "資源回收"}, {"name": "鉛筆", "type": "一般垃圾"}, {"name": "鉛筆盒", "type": "資源回收"}, {"name": "鉛蓄電池", "type": "資源回收"}, {"name": "銅線", "type": "資源回收"}, {"name": "鋁梯", "type": "資源回收"}, {"name": "鋁棒", "type": "資源回收"}, {"name": "鋁箔包", "type": "資源回收"}, {"name": "鋁箔紙", "type": "一般垃圾"}, {"name": "鋁罐", "type": "資源回收"}, {"name": "鋰電池", "type": "資源回收"}, {"name": "鋼琴", "type": "資源回收"}, {"name": "錄影帶內帶", "type": "一般垃圾"}, {"name": "錄音帶內帶", "type": "一般垃圾"}, {"name": "錄音帶外殼卡匣", "type": "一般垃圾"}, {"name": "錠劑", "type": "一般垃圾"}, {"name": "錳鋅電池", "type": "資源回收"}, {"name": "鍋子", "type": "資源回收"}, {"name": "鍵盤", "type": "資源回收"}, {"name": "鎖", "type": "資源回收"}, {"name": "鎖頭", "type": "資源回收"}, {"name": "鎳氫電池", "type": "資源回收"}, {"name": "鎳鎘電池", "type": "資源回收"}, {"name": "鏡子", "type": "一般垃圾"}, {"name": "鐵塊", "type": "資源回收"}, {"name": "鐵杯", "type": "資源回收"}, {"name": "鐵板", "type": "資源回收"}, {"name": "鐵架", "type": "資源回收"}, {"name": "鐵桌", "type": "資源回收"}, {"name": "鐵桶", "type": "資源回收"}, {"name": "鐵條", "type": "資源回收"}, {"name": "鐵棍", "type": "資源回收"}, {"name": "鐵棒", "type": "資源回收"}, {"name": "鐵椅", "type": "資源回收"}, {"name": "鐵櫃", "type": "資源回收"}, {"name": "鐵皮", "type": "資源回收"}, {"name": "鐵碗", "type": "資源回收"}, {"name": "鐵箱", "type": "資源回收"}, {"name": "鐵籠", "type": "資源回收"}, {"name": "鐵絲", "type": "資源回收"}, {"name": "鐵網", "type": "資源回收"}, {"name": "鐵線衣架", "type": "資源回收"}, {"name": "鐵罐", "type": "資源回收"}, {"name": "鐵衣架", "type": "資源回收"}, {"name": "鐵製印台", "type": "一般垃圾"}, {"name": "鐵製桌椅", "type": "資源回收"}, {"name": "鐵製罐頭", "type": "資源回收"}, {"name": "鐵釘", "type": "資源回收"}, {"name": "鐵鉤", "type": "資源回收"}, {"name": "鐵鍊", "type": "資源回收"}, {"name": "鐵鎚", "type": "資源回收"}, {"name": "鐵鐘", "type": "資源回收"}, {"name": "鑰匙", "type": "資源回收"}, {"name": "長纖維類", "type": "一般垃圾"}, {"name": "長褲", "type": "資源回收"}, {"name": "門把手", "type": "資源回收"}, {"name": "門簾伸縮桿", "type": "資源回收"}, {"name": "門鎖", "type": "資源回收"}, {"name": "防塵袋", "type": "一般垃圾"}, {"name": "防曬乳瓶", "type": "資源回收"}, {"name": "防水浴帽", "type": "一般垃圾"}, {"name": "防潮箱", "type": "資源回收"}, {"name": "防蚊掛片外殼", "type": "資源回收"}, {"name": "除濕機", "type": "資源回收"}, {"name": "陶/砂鍋", "type": "一般垃圾"}, {"name": "陶瓷保溫杯", "type": "一般垃圾"}, {"name": "陶瓷保溫瓶", "type": "一般垃圾"}, {"name": "陶瓷保鮮盒", "type": "一般垃圾"}, {"name": "陶瓷容器", "type": "一般垃圾"}, {"name": "陶瓷花瓶(盆)", "type": "一般垃圾"}, {"name": "陶瓷酒瓶", "type": "一般垃圾"}, {"name": "陶瓷食器", "type": "一般垃圾"}, {"name": "陶瓷餐具", "type": "一般垃圾"}, {"name": "陶笛", "type": "一般垃圾"}, {"name": "隔熱玻璃", "type": "資源回收"}, {"name": "隨身碟", "type": "資源回收"}, {"name": "隨身聽", "type": "資源回收"}, {"name": "隱形眼鏡", "type": "一般垃圾"}, {"name": "雜誌", "type": "資源回收"}, {"name": "雞油", "type": "廚餘"}, {"name": "離子夾", "type": "資源回收"}, {"name": "離心紙", "type": "一般垃圾"}, {"name": "雨傘布", "type": "一般垃圾"}, {"name": "雨傘骨架", "type": "資源回收"}, {"name": "雨鞋", "type": "一般垃圾"}, {"name": "雪平鍋", "type": "資源回收"}, {"name": "零食餅乾", "type": "廚餘"}, {"name": "雷射影印機", "type": "資源回收"}, {"name": "電冰箱", "type": "資源回收"}, {"name": "電動代步車", "type": "資源回收"}, {"name": "電動修鬍刀", "type": "資源回收"}, {"name": "電動刮鬍刀", "type": "資源回收"}, {"name": "電動削鉛筆機", "type": "一般垃圾"}, {"name": "電動吸乳器", "type": "資源回收"}, {"name": "電動拌料機", "type": "資源回收"}, {"name": "電動擠奶器", "type": "資源回收"}, {"name": "電動機車(掛牌)", "type": "資源回收"}, {"name": "電動機車電池", "type": "資源回收"}, {"name": "電動滑板車", "type": "資源回收"}, {"name": "電動牙刷", "type": "資源回收"}, {"name": "電動理髮刀", "type": "資源回收"}, {"name": "電動自行車", "type": "資源回收"}, {"name": "電動輔助自行車", "type": "資源回收"}, {"name": "電子手錶", "type": "一般垃圾"}, {"name": "電子溫度計", "type": "資源回收"}, {"name": "電子琴", "type": "一般垃圾"}, {"name": "電子秤", "type": "資源回收"}, {"name": "電子菸", "type": "一般垃圾"}, {"name": "電子血壓計", "type": "資源回收"}, {"name": "電子鍋", "type": "資源回收"}, {"name": "電捲棒", "type": "資源回收"}, {"name": "電暖爐", "type": "資源回收"}, {"name": "電棒", "type": "資源回收"}, {"name": "電棒捲", "type": "資源回收"}, {"name": "電毯", "type": "一般垃圾"}, {"name": "電源器", "type": "資源回收"}, {"name": "電火鍋", "type": "資源回收"}, {"name": "電烤盤", "type": "資源回收"}, {"name": "電熱水瓶", "type": "資源回收"}, {"name": "電磁爐", "type": "資源回收"}, {"name": "電線", "type": "資源回收"}, {"name": "電腦介面卡", "type": "資源回收"}, {"name": "電腦喇叭", "type": "資源回收"}, {"name": "電腦機殼", "type": "資源回收"}, {"name": "電腦紙報表", "type": "資源回收"}, {"name": "電腦網路卡", "type": "資源回收"}, {"name": "電腦線", "type": "資源回收"}, {"name": "電腦記憶體", "type": "資源回收"}, {"name": "電腦音效卡", "type": "資源回收"}, {"name": "電腦顯示卡", "type": "資源回收"}, {"name": "電蚊拍", "type": "資源回收"}, {"name": "電視", "type": "資源回收"}, {"name": "電視機", "type": "資源回收"}, {"name": "電視盒子", "type": "資源回收"}, {"name": "電視遊樂機", "type": "一般垃圾"}, {"name": "電話機", "type": "資源回收"}, {"name": "電話簿", "type": "資源回收"}, {"name": "電風扇", "type": "資源回收"}, {"name": "電鬍刀", "type": "資源回收"}, {"name": "露營椅", "type": "資源回收"}, {"name": "露營野餐墊", "type": "一般垃圾"}, {"name": "面霜乳液瓶罐", "type": "資源回收"}, {"name": "鞋子", "type": "一般垃圾"}, {"name": "鞋架", "type": "資源回收"}, {"name": "鞭炮", "type": "一般垃圾"}, {"name": "韓國烤盤", "type": "資源回收"}, {"name": "音響", "type": "資源回收"}, {"name": "顯示器", "type": "資源回收"}, {"name": "風水石", "type": "一般垃圾"}, {"name": "食品分隔襯墊", "type": "資源回收"}, {"name": "食品包裝袋", "type": "一般垃圾"}, {"name": "食品桶", "type": "資源回收"}, {"name": "食品米袋", "type": "一般垃圾"}, {"name": "食品袋", "type": "一般垃圾"}, {"name": "食物夾", "type": "資源回收"}, {"name": "食物袋", "type": "一般垃圾"}, {"name": "食物調理機", "type": "資源回收"}, {"name": "食用油", "type": "資源回收"}, {"name": "飯匙", "type": "一般垃圾"}, {"name": "飯杓", "type": "一般垃圾"}, {"name": "飲料包", "type": "資源回收"}, {"name": "飲料封口膜", "type": "一般垃圾"}, {"name": "飲料杯", "type": "資源回收"}, {"name": "飲料杯紙套", "type": "資源回收"}, {"name": "飲料紙杯", "type": "資源回收"}, {"name": "飲料紙盒包", "type": "資源回收"}, {"name": "飲料罐", "type": "資源回收"}, {"name": "飲料罐外塑膠收縮膜", "type": "一般垃圾"}, {"name": "飲料鋁罐", "type": "資源回收"}, {"name": "飲料鐵罐", "type": "資源回收"}, {"name": "飲水機RO儲水壓力桶", "type": "資源回收"}, {"name": "飼料袋", "type": "一般垃圾"}, {"name": "餅乾罐", "type": "資源回收"}, {"name": "餅乾袋", "type": "一般垃圾"}, {"name": "餅乾鐵罐", "type": "資源回收"}, {"name": "養樂多瓶", "type": "資源回收"}, {"name": "養魚的氧氣瓶", "type": "資源回收"}, {"name": "餐碗", "type": "資源回收"}, {"name": "香氛機", "type": "一般垃圾"}, {"name": "香水瓶", "type": "資源回收"}, {"name": "香灰", "type": "一般垃圾"}, {"name": "香燻機", "type": "一般垃圾"}, {"name": "香菸紙盒", "type": "資源回收"}, {"name": "香蕉皮", "type": "廚餘"}, {"name": "馬克杯", "type": "一般垃圾"}, {"name": "馬桶座墊", "type": "一般垃圾"}, {"name": "馬桶蓋", "type": "一般垃圾"}, {"name": "驗孕棒", "type": "一般垃圾"}, {"name": "髒保麗龍", "type": "一般垃圾"}, {"name": "髒報紙", "type": "一般垃圾"}, {"name": "髒污塑膠袋", "type": "一般垃圾"}, {"name": "體重機", "type": "資源回收"}, {"name": "體重計", "type": "資源回收"}, {"name": "高壓容器", "type": "資源回收"}, {"name": "高壓瓶罐(家用)", "type": "資源回收"}, {"name": "高壓鋼瓶", "type": "資源回收"}, {"name": "高強度照明燈", "type": "資源回收"}, {"name": "高爾夫球桿", "type": "資源回收"}, {"name": "高爾夫球袋", "type": "一般垃圾"}, {"name": "高速複合機", "type": "資源回收"}, {"name": "髮廊護髮機", "type": "資源回收"}, {"name": "髮膠噴罐", "type": "資源回收"}, {"name": "鬆餅機", "type": "資源回收"}, {"name": "鬧鐘", "type": "資源回收"}, {"name": "魔晶土", "type": "一般垃圾"}, {"name": "魚刺", "type": "一般垃圾"}, {"name": "魚缸", "type": "資源回收"}, {"name": "魚缸沉水馬達", "type": "資源回收"}, {"name": "魚缸過濾器", "type": "一般垃圾"}, {"name": "魚飼料", "type": "廚餘"}, {"name": "魚骨頭", "type": "一般垃圾"}, {"name": "鳥禽飼料", "type": "廚餘"}, {"name": "鳳梨頭", "type": "一般垃圾"}, {"name": "鹵素燈", "type": "一般垃圾"}, {"name": "鹼性電池", "type": "資源回收"}, {"name": "鹽燈", "type": "一般垃圾"}, {"name": "麥克筆塑膠筆桿", "type": "一般垃圾"}, {"name": "麥克筆外殼筆桿", "type": "資源回收"}, {"name": "麥片", "type": "廚餘"}, {"name": "麵包", "type": "廚餘"}, {"name": "麵條", "type": "廚餘"}, {"name": "麵粉", "type": "廚餘"}, {"name": "麵粉製品", "type": "廚餘"}, {"name": "麻將", "type": "一般垃圾"}, {"name": "麻布袋", "type": "一般垃圾"}, {"name": "麻油", "type": "資源回收"}, {"name": "黏鼠板", "type": "一般垃圾"}, {"name": "黑膠唱片", "type": "一般垃圾"}, {"name": "點滴(軟)管", "type": "一般垃圾"}, {"name": "點滴袋", "type": "一般垃圾"}, {"name": "點滴輸液器", "type": "一般垃圾"}, {"name": "點火器", "type": "一般垃圾"}];
+
+const CATEGORY_META = {
+  "一般垃圾": { emojiSet:["🗑️","🧻","🥡","🧦"], color:"#ef4444" },
+  "資源回收": { emojiSet:["♻️","🧴","🥫","🧃"], color:"#1f9d55" },
+  "廚餘": { emojiSet:["🍌","🍎","🥬","🍗"], color:"#f59e0b" }
+};
+
+const gameArea = document.getElementById("gameArea");
+const missionText = document.getElementById("missionText");
+const hintText = document.getElementById("hintText");
+const timeText = document.getElementById("timeText");
+const scoreText = document.getElementById("scoreText");
+const startOverlay = document.getElementById("startOverlay");
+const resultOverlay = document.getElementById("resultOverlay");
+const resultTitle = document.getElementById("resultTitle");
+const resultDesc = document.getElementById("resultDesc");
+const resultLinks = document.getElementById("resultLinks");
+const qrImage = document.getElementById("qrImage");
+const debugBox = document.getElementById("debugBox");
+const hero = document.getElementById("hero");
+
+const infoTag = document.getElementById("infoTag");
+const infoName = document.getElementById("infoName");
+const infoDesc = document.getElementById("infoDesc");
+const infoNote = document.getElementById("infoNote");
+
+const state = {
+  running:false,
+  targetType:"",
+  score:0,
+  timeLeft:GAME_CONFIG.duration,
+  items:[],
+  timerId:null,
+  spawnId:null,
+  rafId:null,
+  lastTs:0,
+  lastHit:null
+};
+
+function rand(arr) {
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function pickTargetType() {
+  return rand(["一般垃圾","資源回收","廚餘"]);
+}
+
+function updateDebug() {
+  debugBox.innerHTML = `題庫 ${QUESTION_BANK.length}<br>場上 ${state.items.length}<br>目標 ${state.targetType || "-"}`;
+}
+
+function getItemAdvice(item) {
+  const type = item?.type || "";
+  const name = item?.name || "尚未出手！";
+  if (type === "資源回收") {
+    return {
+      tag: "♻️ 資源回收",
+      desc: `「${name}」屬於資源回收。建議先清空內容物、簡單分類整理後，再交給清潔隊資源回收或回收點。`,
+      note: "小提醒：回收前先確認沒有殘留內容物，會更容易分類喔。"
+    };
+  }
+  if (type === "廚餘") {
+    return {
+      tag: "🍌 廚餘",
+      desc: `「${name}」屬於廚餘。建議先把包裝拿掉、瀝乾水分，再依當地規定交給廚餘回收。`,
+      note: "小提醒：廚餘不要連同塑膠袋或餐盒一起丟入。"
+    };
+  }
+  return {
+    tag: "🗑️ 一般垃圾",
+    desc: `「${name}」屬於一般垃圾。請妥善裝袋後交給垃圾車；若物品仍可使用，也可以先考慮清潔後再利用或捐贈。`,
+    note: "小提醒：看起來像布類、髒污包材或不可回收用品，通常屬於一般垃圾。"
+  };
+}
+
+function setInfoPanel(item, wasCorrect = true) {
+  if (!item) {
+    infoTag.textContent = "尚未命中任何物品";
+    infoName.textContent = "準備開始";
+    infoDesc.textContent = "遊戲開始後，會顯示你擊中的物品與分類方式。";
+    infoNote.textContent = "小提醒：只打目標，別亂出手！";
+    return;
+  }
+  const advice = getItemAdvice(item);
+  infoTag.textContent = advice.tag + (wasCorrect ? "｜答對" : "｜這題其實要跳過");
+  infoName.textContent = item.name;
+  infoDesc.textContent = advice.desc;
+  infoNote.textContent = wasCorrect
+    ? `這個物品的正確分類是「${item.type}」。`
+    : `你這次打到的是「${item.name}」，但本回合目標其實是「${state.targetType}」。`;
+}
+
+function resetGame() {
+  state.running = false;
+  state.score = 0;
+  state.timeLeft = GAME_CONFIG.duration;
+  state.targetType = pickTargetType();
+  state.items.forEach(i => i.el.remove());
+  state.items = [];
+  state.lastHit = null;
+  scoreText.textContent = "0";
+  timeText.textContent = String(GAME_CONFIG.duration);
+  missionText.textContent = `鎖定：${state.targetType}`;
+  hintText.textContent = "看到正確物品再按「出手！」";
+  setInfoPanel(null);
+  updateDebug();
+}
+
+function startGame() {
+  resetGame();
+  startOverlay.classList.add("hidden");
+  resultOverlay.classList.add("hidden");
+  state.running = true;
+  state.lastTs = 0;
+  spawnItem();
+  state.spawnId = setInterval(() => {
+    if (state.running && state.items.length < GAME_CONFIG.maxItems) spawnItem();
+  }, GAME_CONFIG.spawnEveryMs);
+
+  state.timerId = setInterval(() => {
+    if (!state.running) return;
+    state.timeLeft -= 1;
+    timeText.textContent = String(Math.max(0, state.timeLeft));
+    if (state.timeLeft <= 0) endGame();
+  }, 1000);
+
+  state.rafId = requestAnimationFrame(loop);
+}
+
+function spawnItem() {
+  const source = rand(QUESTION_BANK);
+  const meta = CATEGORY_META[source.type] || CATEGORY_META["一般垃圾"];
+  const el = document.createElement("div");
+  el.className = "item";
+  el.innerHTML = `<div class="emoji">${rand(meta.emojiSet)}</div><div class="name">${source.name}</div>`;
+  gameArea.appendChild(el);
+  const x = gameArea.clientWidth + 20 + Math.random()*60;
+  const item = {
+    el,
+    x,
+    width: 92,
+    name: source.name,
+    type: source.type
+  };
+  el.style.left = `${x}px`;
+  state.items.push(item);
+  updateDebug();
+}
+
+function loop(ts) {
+  if (!state.running) return;
+  if (!state.lastTs) state.lastTs = ts;
+  const dt = Math.min(34, ts - state.lastTs);
+  state.lastTs = ts;
+
+  const zoneCenter = gameArea.clientWidth / 2;
+  state.items.forEach(item => {
+    item.x -= GAME_CONFIG.moveSpeed * (dt/16.7);
+    item.el.style.left = `${item.x}px`;
+
+    const itemCenter = item.x + (item.el.offsetWidth || 92)/2;
+    const inZone = Math.abs(itemCenter - zoneCenter) < 62;
+    item.el.classList.toggle("good", inZone && item.type === state.targetType);
+    item.el.classList.toggle("bad", inZone && item.type !== state.targetType);
+  });
+
+  state.items = state.items.filter(item => {
+    if (item.x < -140) {
+      item.el.remove();
+      return false;
+    }
+    return true;
+  });
+  updateDebug();
+  state.rafId = requestAnimationFrame(loop);
+}
+
+function showFx(text, x, y, color) {
+  const fx = document.createElement("div");
+  fx.className = "fx";
+  fx.textContent = text;
+  fx.style.left = `${x}px`;
+  fx.style.top = `${y}px`;
+  fx.style.color = color;
+  gameArea.appendChild(fx);
+  setTimeout(() => fx.remove(), 760);
+}
+
+function hit() {
+  if (!state.running) return;
+  hero.classList.remove("attack");
+  void hero.offsetWidth;
+  hero.classList.add("attack");
+
+  const zoneCenter = gameArea.clientWidth / 2;
+  let target = null;
+  let bestDist = Infinity;
+
+  state.items.forEach(item => {
+    const itemCenter = item.x + (item.el.offsetWidth || 92)/2;
+    const dist = Math.abs(itemCenter - zoneCenter);
+    if (dist < 70 && dist < bestDist) {
+      bestDist = dist;
+      target = item;
+    }
+  });
+
+  if (!target) {
+    showFx("MISS", zoneCenter, gameArea.clientHeight - 220, "#ef4444");
+    infoTag.textContent = "⚠️ 沒有擊中物品";
+    infoName.textContent = "請等物品進入出手！區";
+    infoDesc.textContent = "看到物品進入中間虛線區，再按下出手！，就比較容易成功喔。";
+    infoNote.textContent = "小提醒：綠框代表這個物品符合本回合目標。";
+    return;
+  }
+
+  const correct = target.type === state.targetType;
+  setInfoPanel(target, correct);
+
+  if (correct) {
+    state.score += 10;
+    scoreText.textContent = String(state.score);
+    showFx("+10", target.x + 46, gameArea.clientHeight - 210, "#1f9d55");
+  } else {
+    showFx("這題要跳過", target.x + 46, gameArea.clientHeight - 210, "#ef4444");
+  }
+
+  target.el.remove();
+  state.items = state.items.filter(i => i !== target);
+  updateDebug();
+}
+
+function endGame() {
+  state.running = false;
+  clearInterval(state.timerId);
+  clearInterval(state.spawnId);
+  cancelAnimationFrame(state.rafId);
+  resultOverlay.classList.remove("hidden");
+
+  const passed = state.score >= GAME_CONFIG.passScore;
+  if (passed) {
+    resultTitle.textContent = "🎉 恭喜達標！";
+    resultDesc.innerHTML = `你得到 <b>${state.score} 分</b>，已達到抽獎資格！<br>掃描 QR Code 或點按鈕加入 LINE 好友並參加抽獎。`;
+    const qrTarget = encodeURIComponent(GAME_CONFIG.lineDrawUrl || GAME_CONFIG.lineJoinUrl);
+    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${qrTarget}`;
+    qrImage.classList.remove("hidden");
+    resultLinks.innerHTML = `
+      <a class="big-btn" href="${GAME_CONFIG.lineJoinUrl}" target="_blank" rel="noopener">加入 LINE 好友</a><br>
+      <a class="sec-btn" href="${GAME_CONFIG.lineDrawUrl}" target="_blank" rel="noopener">前往抽獎頁</a>
+    `;
+  } else {
+    resultTitle.textContent = "💪 再試一次！";
+    resultDesc.innerHTML = `你這次得到 <b>${state.score} 分</b>。<br>達到 <b>${GAME_CONFIG.passScore} 分</b> 就能參加抽獎喔！`;
+    qrImage.classList.add("hidden");
+    resultLinks.innerHTML = "";
+  }
+}
+
+document.getElementById("startBtn").addEventListener("click", startGame);
+document.getElementById("restartBtn").addEventListener("click", startGame);
+document.getElementById("hitBtn").addEventListener("click", hit);
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === " " || e.key === "Enter") {
+    e.preventDefault();
+    hit();
+  }
+});
+
+gameArea.addEventListener("touchend", (e) => {
+  if (!state.running) return;
+  const target = e.target;
+  if (!target.closest || !target.closest('.controls')) {
+    hit();
+  }
+}, {passive:true});
+
+resetGame();
+</script>
+</body>
+</html>
