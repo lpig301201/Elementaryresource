@@ -1340,6 +1340,14 @@ z-index:1000; pointer-events:none;">
   </div>
 </div>
 
+
+<div id="infoFallback" style="display:none !important;">
+  <div id="infoTag"></div>
+  <div id="infoName"></div>
+  <div id="infoDesc"></div>
+  <div id="infoNote"></div>
+</div>
+
 <script>
 const GAME_CONFIG = {
   lineJoinUrl: "https://line.me/R/ti/p/@YOUR_LINE_ID",
@@ -1456,17 +1464,17 @@ function getItemAdvice(item) {
 
 function setInfoPanel(item, wasCorrect = true) {
   if (!item) {
-    infoTag.textContent = "尚未命中任何物品";
-    infoName.textContent = "準備開始";
-    infoDesc.textContent = "遊戲開始後，會顯示你擊中的物品與分類方式。";
-    infoNote.textContent = "小提醒：只打目標，別亂出手！";
+    if (infoTag) infoTag.textContent = "尚未命中任何物品";
+    if (infoName) infoName.textContent = "準備開始";
+    if (infoDesc) infoDesc.textContent = "遊戲開始後，會顯示你擊中的物品與分類方式。";
+    if (infoNote) infoNote.textContent = "小提醒：只打目標，別亂出手！";
     return;
   }
   const advice = getItemAdvice(item);
-  infoTag.textContent = advice.tag + (wasCorrect ? "｜答對" : "｜這題其實要跳過");
-  infoName.textContent = item.name;
-  infoDesc.textContent = advice.desc;
-  infoNote.textContent = wasCorrect
+  if (infoTag) infoTag.textContent = advice.tag + (wasCorrect ? "｜答對" : "｜這題其實要跳過");
+  if (infoName) infoName.textContent = item.name;
+  if (infoDesc) infoDesc.textContent = advice.desc;
+  if (infoNote) infoNote.textContent = wasCorrect
     ? `這個物品的正確分類是「${item.type}」。`
     : `你這次打到的是「${item.name}」，但本回合目標其實是「${state.targetType}」。`;
 }
@@ -1588,10 +1596,10 @@ function hit() {
 
   if (!target) {
     showFx("MISS", zoneCenter, gameArea.clientHeight - 220, "#ef4444");
-    infoTag.textContent = "⚠️ 沒有擊中物品";
-    infoName.textContent = "請等物品進入出手！區";
-    infoDesc.textContent = "看到物品進入中間虛線區，再按下出手！，就比較容易成功喔。";
-    infoNote.textContent = "小提醒：綠框代表這個物品符合本回合目標。";
+    if (infoTag) infoTag.textContent = "⚠️ 沒有擊中物品";
+    if (infoName) infoName.textContent = "請等物品進入出手！區";
+    if (infoDesc) infoDesc.textContent = "看到物品進入中間虛線區，再按下出手！，就比較容易成功喔。";
+    if (infoNote) infoNote.textContent = "小提醒：綠框代表這個物品符合本回合目標。";
     return;
   }
 
@@ -1678,13 +1686,6 @@ function showHit(text){
 }
 
 </script>
-
-<div id="infoFallback" style="display:none !important;">
-  <div id="infoTag"></div>
-  <div id="infoName"></div>
-  <div id="infoDesc"></div>
-  <div id="infoNote"></div>
-</div>
 
 </body>
 </html>
