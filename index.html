@@ -858,6 +858,249 @@
       }
     }
 
+
+    /* 手機 LINE 瀏覽器最終修正：把提示卡移到底部，不蓋住主遊戲區 */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 8px 10px 4px !important;
+        gap: 6px !important;
+      }
+      .hero-card {
+        padding: 10px 12px !important;
+      }
+      .hero-title {
+        font-size: 18px !important;
+      }
+      .hero-sub {
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        margin-top: 3px !important;
+        padding-right: 30px !important;
+      }
+      .score-wrap > div {
+        min-width: 72px !important;
+        font-size: 13px !important;
+        padding: 7px 9px !important;
+      }
+
+      .game {
+        min-height: 0 !important;
+      }
+
+      .mission-card {
+        top: 6px !important;
+        left: 10px !important;
+        right: 10px !important;
+        padding: 9px 11px !important;
+        gap: 6px !important;
+        border-radius: 16px !important;
+      }
+      .mission-card small {
+        font-size: 11px !important;
+      }
+      .mission-card b {
+        font-size: 18px !important;
+      }
+      .mission-tip {
+        font-size: 12px !important;
+        padding: 8px 9px !important;
+      }
+
+      /* 關鍵：提示卡改貼底，不擋中間畫面 */
+      .info-card {
+        top: auto !important;
+        bottom: 126px !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        max-width: none !important;
+        padding: 10px 12px !important;
+        border-radius: 18px !important;
+        background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(245,251,255,.90)) !important;
+        box-shadow: 0 10px 22px rgba(20,50,80,.12) !important;
+      }
+      .info-head {
+        font-size: 15px !important;
+        margin-bottom: 2px !important;
+      }
+      .tag {
+        font-size: 11px !important;
+        padding: 5px 8px !important;
+        margin: 6px 0 5px !important;
+      }
+      .item-name {
+        font-size: 15px !important;
+        margin: 0 0 3px !important;
+      }
+      .item-desc {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        min-height: 0 !important;
+        max-height: 38px !important;
+        overflow: hidden !important;
+      }
+      .item-note {
+        font-size: 11px !important;
+        margin-top: 4px !important;
+      }
+
+      .sun {
+        width: 50px !important;
+        height: 50px !important;
+        right: 12px !important;
+        top: 12px !important;
+      }
+
+      .decor-cloud.large { transform: scale(.62) !important; }
+      .decor-cloud.small { transform: scale(.56) !important; }
+      .decor-bird, .decor-butterfly { opacity: .65 !important; }
+      .decor-sign { display: none !important; }
+
+      .grass {
+        bottom: 166px !important;
+        height: 24px !important;
+      }
+      .ground {
+        bottom: 74px !important;
+        height: 92px !important;
+      }
+      .hit-zone {
+        bottom: 74px !important;
+        width: 82px !important;
+        height: 92px !important;
+      }
+      .zone-label {
+        bottom: 170px !important;
+        font-size: 11px !important;
+        padding: 5px 8px !important;
+      }
+
+      .hero {
+        width: 62px !important;
+        height: 86px !important;
+        bottom: 78px !important;
+      }
+      .hero .head {
+        width: 30px !important;
+        height: 30px !important;
+      }
+      .hero .helmet {
+        width: 38px !important;
+        height: 12px !important;
+      }
+      .hero .body {
+        width: 40px !important;
+        height: 28px !important;
+      }
+      .hero .logo {
+        font-size: 13px !important;
+        top: 6px !important;
+      }
+      .hero .arm {
+        top: 35px !important;
+        width: 12px !important;
+        height: 7px !important;
+      }
+      .hero .tool {
+        font-size: 16px !important;
+        top: 33px !important;
+      }
+      .hero .leg {
+        width: 8px !important;
+        height: 20px !important;
+      }
+
+      .item {
+        bottom: 82px !important;
+        min-width: 64px !important;
+        max-width: 76px !important;
+        min-height: 58px !important;
+        border-radius: 16px !important;
+        padding: 7px 6px !important;
+      }
+      .item .emoji {
+        font-size: 20px !important;
+      }
+      .item .name {
+        font-size: 11px !important;
+        margin-top: 3px !important;
+      }
+
+      .decor-animal.cat {
+        right: 8px !important;
+        bottom: 148px !important;
+        font-size: 22px !important;
+      }
+      .decor-animal.rabbit {
+        left: 10px !important;
+        bottom: 150px !important;
+        font-size: 20px !important;
+      }
+      .decor-child.one {
+        left: 74px !important;
+        bottom: 148px !important;
+        transform: scale(.5) !important;
+      }
+      .decor-child.two {
+        right: 50px !important;
+        bottom: 148px !important;
+        transform: scale(.48) !important;
+      }
+      .decor-tree {
+        transform: scale(.6) !important;
+      }
+      .decor-shrub {
+        transform: scale(.62) !important;
+      }
+      .decor-flower {
+        font-size: 15px !important;
+      }
+
+      .controls {
+        padding: 8px 10px calc(12px + env(safe-area-inset-bottom)) !important;
+      }
+      button {
+        font-size: 20px !important;
+        padding: 14px 12px !important;
+        border-radius: 18px !important;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .mission-card {
+        top: 4px !important;
+        padding: 8px 10px !important;
+      }
+      .mission-card b {
+        font-size: 17px !important;
+      }
+      .info-card {
+        bottom: 120px !important;
+        padding: 9px 10px !important;
+      }
+      .item-desc {
+        max-height: 34px !important;
+      }
+      .grass {
+        bottom: 160px !important;
+      }
+      .ground {
+        height: 88px !important;
+      }
+      .hit-zone {
+        height: 88px !important;
+      }
+      .zone-label {
+        bottom: 164px !important;
+      }
+      .hero {
+        bottom: 76px !important;
+      }
+      .item {
+        bottom: 80px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -898,7 +1141,7 @@
     </div>
 
     <div class="info-card">
-      <div class="info-head">📘 📘 分類提示</div>
+      <div class="info-head">📘 分類提示</div>
       <div class="tag" id="infoTag">尚未命中任何物品</div>
       <div class="item-name" id="infoName">準備開始</div>
       <div class="item-desc" id="infoDesc">遊戲開始後，會顯示你擊中的物品與分類方式。</div>
