@@ -1202,6 +1202,14 @@
       }
     }
 
+
+    button {
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+      cursor: pointer;
+    }
+
 </style>
 </head>
 <body>
@@ -1320,7 +1328,7 @@ z-index:1000; pointer-events:none;">
         <p>每回合會指定一種目標：<b>一般垃圾、資源回收、廚餘</b>。</p>
         <p>物品會沿著地面從右往左前進。當它進入中間的 <b>出手！區</b>，如果符合目標，就按下 <b>💥 出手！</b>！</p>
         <p>每個正確物品 <b>+10 分</b>，40 秒內達到 <b>100 分</b> 就能參加抽獎 🎉</p>
-        <button id="startBtn" style="background:linear-gradient(135deg,#2aba65,#1f9d55); box-shadow:0 16px 26px rgba(31,157,85,.25);">開始遊戲</button>
+        <button type="button" id="startBtn" style="background:linear-gradient(135deg,#2aba65,#1f9d55); box-shadow:0 16px 26px rgba(31,157,85,.25);">開始遊戲</button>
       </div>
     </div>
 
@@ -1330,13 +1338,13 @@ z-index:1000; pointer-events:none;">
         <p id="resultDesc"></p>
         <img id="qrImage" class="qr hidden" alt="LINE QR Code" />
         <div id="resultLinks"></div>
-        <button id="restartBtn" style="background:linear-gradient(135deg,#3d93ff,#2563eb); box-shadow:0 16px 26px rgba(37,99,235,.25); margin-top:12px;">再挑戰一次</button>
+        <button type="button" id="restartBtn" style="background:linear-gradient(135deg,#3d93ff,#2563eb); box-shadow:0 16px 26px rgba(37,99,235,.25); margin-top:12px;">再挑戰一次</button>
       </div>
     </div>
   </div>
 
   <div class="controls" id="controlsArea">
-    <button id="hitBtn">💥 出手！</button>
+    <button type="button" id="hitBtn">💥 出手！</button>
   </div>
 </div>
 
@@ -1646,9 +1654,33 @@ function endGame() {
   }
 }
 
-document.getElementById("startBtn").addEventListener("click", startGame);
-document.getElementById("restartBtn").addEventListener("click", startGame);
-document.getElementById("hitBtn").addEventListener("click", hit);
+const startBtnEl = document.getElementById("startBtn");
+const restartBtnEl = document.getElementById("restartBtn");
+const hitBtnEl = document.getElementById("hitBtn");
+
+function bindTap(el, handler) {
+  if (!el) return;
+  let touched = false;
+  el.addEventListener("touchend", (e) => {
+    touched = true;
+    e.preventDefault();
+    e.stopPropagation();
+    handler();
+    setTimeout(() => { touched = false; }, 350);
+  }, { passive: false });
+  el.addEventListener("click", (e) => {
+    if (touched) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    handler();
+  });
+}
+
+bindTap(startBtnEl, startGame);
+bindTap(restartBtnEl, startGame);
+bindTap(hitBtnEl, hit);
 
 window.addEventListener("keydown", (e) => {
   if (e.key === " " || e.key === "Enter") {
@@ -1658,11 +1690,12 @@ window.addEventListener("keydown", (e) => {
 });
 
 gameArea.addEventListener("touchend", (e) => {
-  if (!state.running) return;
   const target = e.target;
-  if (!target.closest || !target.closest('.controls')) {
-    hit();
+  if (target && target.closest && (target.closest('#startOverlay') || target.closest('#resultOverlay') || target.closest('.controls'))) {
+    return;
   }
+  if (!state.running) return;
+  hit();
 }, {passive:true});
 
 resetGame();
