@@ -1205,6 +1205,26 @@
 </style>
 </head>
 <body>
+
+<div id="hintBar" style="
+position:fixed; top:70px; left:10px; right:10px;
+background:rgba(255,255,255,0.9);
+border-radius:12px; padding:6px 10px;
+font-size:13px; font-weight:700;
+text-align:center; z-index:999;">
+準備開始
+</div>
+
+<div id="hitPopup" style="
+position:fixed; top:40%; left:50%;
+transform:translate(-50%,-50%);
+font-size:22px; font-weight:900;
+color:#1fa84a; opacity:0;
+transition:all .3s;
+z-index:1000;">
++10
+</div>
+
 <div class="app">
   <div class="topbar">
     <div class="hero-card">
@@ -1241,13 +1261,7 @@
       <div class="mission-tip" id="hintText">看到正確物品再按「出手！」</div>
     </div>
 
-    <div class="info-card">
-      <div class="info-head">📘 分類提示</div>
-      <div class="tag" id="infoTag">尚未命中任何物品</div>
-      <div class="item-name" id="infoName">準備開始</div>
-      <div class="item-desc" id="infoDesc">遊戲開始後，會顯示你擊中的物品與分類方式。</div>
-      <div class="item-note" id="infoNote">小提醒：只打目標，別亂出手！</div>
-    </div>
+    
 
     <div class="zone-label">出手！區</div>
     <div class="hit-zone"></div>
@@ -1586,6 +1600,7 @@ function hit() {
 
   if (correct) {
     state.score += 10;
+showHit("+10 " + currentItem.name + " → " + currentItem.type);
     scoreText.textContent = String(state.score);
     showFx("+10", target.x + 46, gameArea.clientHeight - 210, "#1f9d55");
   } else {
@@ -1645,6 +1660,23 @@ gameArea.addEventListener("touchend", (e) => {
 resetGame();
 
 window.addEventListener('resize', () => { speed = getAdaptiveMoveSpeed(); });
+
+function showHit(text){
+  const el = document.getElementById("hitPopup");
+  const hint = document.getElementById("hintBar");
+
+  el.innerText = text;
+  el.style.opacity = 1;
+  el.style.transform = "translate(-50%,-60%) scale(1.1)";
+
+  hint.innerText = text;
+
+  setTimeout(()=>{
+    el.style.opacity = 0;
+    el.style.transform = "translate(-50%,-50%) scale(1)";
+  },1200);
+}
+
 </script>
 </body>
 </html>
