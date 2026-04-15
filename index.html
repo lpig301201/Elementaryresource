@@ -1101,6 +1101,107 @@
       }
     }
 
+
+    /* 手機版：讓出手區完整露出 */
+    @media (max-width: 768px) {
+      .info-card {
+        top: 188px !important;
+        bottom: auto !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        max-width: none !important;
+        padding: 8px 10px !important;
+        border-radius: 16px !important;
+        background: linear-gradient(180deg, rgba(255,255,255,.90), rgba(248,252,255,.86)) !important;
+        backdrop-filter: blur(5px) !important;
+      }
+      .info-head {
+        font-size: 14px !important;
+        margin-bottom: 2px !important;
+      }
+      .tag {
+        font-size: 10px !important;
+        padding: 4px 7px !important;
+        margin: 4px 0 4px !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+      .item-name {
+        font-size: 14px !important;
+        margin: 0 0 2px !important;
+        line-height: 1.2 !important;
+      }
+      .item-desc {
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+        min-height: 0 !important;
+        max-height: 30px !important;
+        overflow: hidden !important;
+      }
+      .item-note {
+        font-size: 10px !important;
+        margin-top: 3px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      /* 清出中間遊戲區 */
+      .grass {
+        bottom: 160px !important;
+      }
+      .ground {
+        bottom: 74px !important;
+        height: 86px !important;
+      }
+      .hit-zone {
+        bottom: 74px !important;
+        width: 82px !important;
+        height: 86px !important;
+        background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.16)) !important;
+        border-left: 4px dashed rgba(255,255,255,.98) !important;
+        border-right: 4px dashed rgba(255,255,255,.98) !important;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.18), 0 0 14px rgba(255,255,255,.08) !important;
+      }
+      .zone-label {
+        bottom: 164px !important;
+        font-size: 11px !important;
+        padding: 5px 8px !important;
+        z-index: 6 !important;
+      }
+      .hero {
+        bottom: 76px !important;
+      }
+      .item {
+        bottom: 80px !important;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .info-card {
+        top: 178px !important;
+        padding: 8px 9px !important;
+      }
+      .item-desc {
+        max-height: 28px !important;
+      }
+      .grass {
+        bottom: 156px !important;
+      }
+      .ground {
+        height: 82px !important;
+      }
+      .hit-zone {
+        height: 82px !important;
+      }
+      .zone-label {
+        bottom: 160px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
