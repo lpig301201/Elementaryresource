@@ -17,7 +17,7 @@ body {
 }
 .wrap { max-width:980px; margin:0 auto; }
 .header {
-  background:transparent; border-radius:28px;  padding:18px 20px; margin-bottom:12px;
+  background:var(--card); border-radius:28px; box-shadow:var(--shadow); padding:18px 20px; margin-bottom:12px;
   border:1px solid rgba(255,255,255,.8);
 }
 .header h1 { margin:0; font-size:32px; }
@@ -26,8 +26,8 @@ body {
   display:grid; grid-template-columns:1.4fr repeat(3,1fr); gap:10px; margin-bottom:12px;
 }
 .card {
-  background:transparent; border-radius:22px;  padding:14px 16px;
-  
+  background:var(--card); border-radius:22px; box-shadow:var(--shadow); padding:14px 16px;
+  border:1px solid rgba(255,255,255,.85);
 }
 .label { font-size:13px; opacity:.7; }
 .value { font-size:30px; font-weight:800; margin-top:4px; }
@@ -35,7 +35,7 @@ body {
   display:grid; grid-template-columns:1.3fr .8fr; gap:12px;
 }
 .game-card {
-  background:transparent; border-radius:28px;  overflow:hidden; 
+  background:var(--card); border-radius:28px; box-shadow:var(--shadow); overflow:hidden; border:1px solid rgba(255,255,255,.85);
 }
 .game-top {
   display:flex; justify-content:space-between; align-items:center; gap:10px; padding:14px 16px; flex-wrap:wrap;
@@ -169,18 +169,21 @@ button, a.action {
   .controls button, .controls a.action, .result-actions button, .result-actions a.action { width:100%; text-align:center; }
 }
 
-.cloud {
-  position:absolute;
-  width:80px;height:40px;
-  background:white;
-  border-radius:40px;
-  opacity:.7;
+.decor-star{
+ position:absolute;
+ width:10px;height:10px;
+ background:#fff;
+ border-radius:50%;
+ opacity:.6;
 }
-.cloud:before,.cloud:after{
-  content:"";position:absolute;background:white;border-radius:50%;
+.decor-leaf{
+ position:absolute;
+ width:20px;height:10px;
+ background:#6bc157;
+ border-radius:10px 10px 0 10px;
+ transform:rotate(30deg);
+ opacity:.7;
 }
-.cloud:before{width:40px;height:40px;left:-20px;top:0;}
-.cloud:after{width:50px;height:50px;right:-20px;top:-10px;}
 
 </style>
 </head>
@@ -217,7 +220,7 @@ button, a.action {
         <div style="font-weight:800;">看準後再按 <span style="color:#ff8f1f;">💥 出手！</span></div>
       </div>
 
-      <div class="game-area" id="gameArea"><div class="cloud" style="top:30px;left:40px;"></div><div class="cloud" style="top:60px;right:60px;"></div>
+      <div class="game-area" id="gameArea"><div class="decor-star" style="top:20px;left:30px;"></div><div class="decor-star" style="top:60px;right:40px;"></div><div class="decor-leaf" style="bottom:140px;left:40px;"></div><div class="decor-leaf" style="bottom:150px;right:60px;"></div>
         <div class="zone"></div>
         <div class="zone-tag">出手區</div>
 
@@ -306,7 +309,7 @@ let currentItem = null;
 let currentNode = null;
 let moveTimer = null;
 let tickTimer = null;
-let speed = 8.2; // slightly faster, still student-friendly
+let speed = 7.2; // slightly faster, still student-friendly
 
 bankCountEl.textContent = QUESTION_BANK.length;
 
@@ -409,7 +412,7 @@ function startGame() {
   score = 0;
   timeLeft = 40;
   running = true;
-  speed = 8.2;
+  speed = 7.2;
   scoreEl.textContent = score;
   timerEl.textContent = timeLeft;
   result.style.display = 'none';
