@@ -65,6 +65,9 @@ body {
   background:repeating-linear-gradient(90deg,#fff7c2 0 42px, transparent 42px 66px);
 }
 .zone {
+  border:4px dashed #ffffff !important;
+  background:rgba(255,255,255,0.15) !important;
+
   position:absolute; left:160px; bottom:32px; width:120px; height:96px;
   border:3px dashed rgba(255,255,255,.88); border-radius:18px; background:rgba(255,255,255,.08);
 }
@@ -162,29 +165,15 @@ button, a.action {
   .hero .head { left:18px; width:34px; height:34px; }
   .hero .body { left:14px; top:30px; width:44px; height:44px; }
   .zone, .zone-tag { left:98px; }
-  .zone { width:96px; height:82px; bottom:28px; }
+  .zone {
+  border:4px dashed #ffffff !important;
+  background:rgba(255,255,255,0.15) !important;
+ width:96px; height:82px; bottom:28px; }
   .zone-tag { bottom:118px; font-size:11px; }
   .item { min-width:78px; max-width:108px; min-height:68px; bottom:30px; padding:8px 10px; }
   .item-name { font-size:16px; }
   .controls button, .controls a.action, .result-actions button, .result-actions a.action { width:100%; text-align:center; }
 }
-
-.decor-star{
- position:absolute;
- width:10px;height:10px;
- background:#fff;
- border-radius:50%;
- opacity:.6;
-}
-.decor-leaf{
- position:absolute;
- width:20px;height:10px;
- background:#6bc157;
- border-radius:10px 10px 0 10px;
- transform:rotate(30deg);
- opacity:.7;
-}
-
 </style>
 </head>
 <body>
@@ -220,7 +209,7 @@ button, a.action {
         <div style="font-weight:800;">看準後再按 <span style="color:#ff8f1f;">💥 出手！</span></div>
       </div>
 
-      <div class="game-area" id="gameArea"><div class="decor-star" style="top:20px;left:30px;"></div><div class="decor-star" style="top:60px;right:40px;"></div><div class="decor-leaf" style="bottom:140px;left:40px;"></div><div class="decor-leaf" style="bottom:150px;right:60px;"></div>
+      <div class="game-area" id="gameArea"><div style="position:absolute;top:20px;left:20px;font-size:20px;">☁️</div><div style="position:absolute;top:40px;right:30px;font-size:18px;">☁️</div>
         <div class="zone"></div>
         <div class="zone-tag">出手區</div>
 
