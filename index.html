@@ -48,7 +48,7 @@
       background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.82));
     }
     .hero-title { font-weight:900; font-size:24px; line-height:1.1; }
-    .hero-sub { margin-top:5px; font-size:13px; color:var(--muted); line-height:1.45; }
+    .hero-sub { margin-top:5px; font-size:12px; color:var(--muted); line-height:1.45; }
     .score-wrap { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; justify-content:flex-end; }
     .score-wrap > div {
       padding:10px 12px; font-weight:900; font-size:15px; min-width:92px; text-align:center;
@@ -93,13 +93,13 @@
     .info-head { display:flex; align-items:center; gap:8px; font-weight:900; font-size:18px; }
     .tag {
       display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px; font-size:13px; font-weight:900; color:#fff;
+      padding:6px 10px; border-radius:999px; font-size:12px; font-weight:900; color:#fff;
       background:linear-gradient(135deg,#3ba0ff,#2563eb);
       margin:10px 0 8px;
     }
     .item-name { font-size:22px; font-weight:900; margin:0 0 6px; }
     .item-desc { font-size:15px; line-height:1.7; color:#2b4966; min-height:72px; }
-    .item-note { font-size:13px; color:#5d7690; margin-top:6px; }
+    .item-note { font-size:12px; color:#5d7690; margin-top:6px; }
 
     .ground {
       position:absolute; left:0; right:0; bottom:92px; height:180px;
@@ -207,7 +207,7 @@
 
     .overlay {
       position:absolute; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
-      background:rgba(18,40,67,.3); padding:18px;
+      background:rgba(18,40,67,.3); padding:18px; pointer-events:auto;
     }
     .card {
       width:min(560px,100%); background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,250,255,.95));
@@ -361,7 +361,7 @@
       border-radius:16px;
       background:rgba(255,255,255,.9);
       border:2px solid rgba(255,255,255,.96);
-      font-size:13px; font-weight:900; color:#12613a;
+      font-size:12px; font-weight:900; color:#12613a;
       box-shadow:0 10px 18px rgba(20,50,80,.1);
     }
     .decor-sign .mini{
@@ -1207,10 +1207,10 @@
 <body>
 
 <div id="hintBar" style="pointer-events:none; 
-position:fixed; top:70px; left:10px; right:10px;
+position:fixed; top:12px; left:10px; right:10px;
 background:rgba(255,255,255,0.9);
 border-radius:12px; padding:6px 10px;
-font-size:13px; font-weight:700;
+font-size:12px; font-weight:700;
 text-align:center; z-index:999; pointer-events:none;">
 準備開始
 </div>
@@ -1600,7 +1600,7 @@ function hit() {
 
   if (correct) {
     state.score += 10;
-showHit("+10 " + currentItem.name + " → " + currentItem.type);
+showHit("+10 " + target.name + " → " + target.type);
     scoreText.textContent = String(state.score);
     showFx("+10", target.x + 46, gameArea.clientHeight - 210, "#1f9d55");
   } else {
@@ -1678,5 +1678,13 @@ function showHit(text){
 }
 
 </script>
+
+<div id="infoFallback" style="display:none !important;">
+  <div id="infoTag"></div>
+  <div id="infoName"></div>
+  <div id="infoDesc"></div>
+  <div id="infoNote"></div>
+</div>
+
 </body>
 </html>
