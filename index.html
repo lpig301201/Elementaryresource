@@ -533,6 +533,104 @@
       .decor-flower{ font-size:20px; }
     }
 
+
+    .sun{
+      animation:sunGlow 3.8s ease-in-out infinite;
+    }
+    @keyframes sunGlow{
+      0%,100%{ transform:scale(1); box-shadow:0 0 0 10px rgba(255,215,106,.18), 0 0 0 20px rgba(255,215,106,.1); }
+      50%{ transform:scale(1.04); box-shadow:0 0 0 14px rgba(255,215,106,.22), 0 0 0 28px rgba(255,215,106,.12); }
+    }
+
+    .decor-cloud{
+      opacity:.96;
+    }
+    .decor-cloud.c2{ animation-duration:11s; }
+    .decor-cloud.c3{ animation-duration:8s; }
+    .decor-cloud.c4{ animation-duration:13s; }
+
+    .decor-animal{
+      position:absolute; z-index:1; pointer-events:none;
+      filter:drop-shadow(0 6px 10px rgba(0,0,0,.08));
+      animation:gentleBob 3.4s ease-in-out infinite;
+      transform-origin:center bottom;
+    }
+    .decor-animal.cat{
+      right:86px; bottom:206px; font-size:38px;
+    }
+    .decor-animal.rabbit{
+      left:126px; bottom:214px; font-size:34px; animation-delay:.6s;
+    }
+    .decor-child{
+      position:absolute; z-index:1; pointer-events:none;
+      width:54px; height:88px;
+      animation:gentleBob 3s ease-in-out infinite;
+      filter:drop-shadow(0 6px 10px rgba(0,0,0,.08));
+    }
+    .decor-child .head{
+      width:24px; height:24px; border-radius:50%;
+      background:#ffd9b8; margin:0 auto; border:2px solid rgba(0,0,0,.06);
+    }
+    .decor-child .hair{
+      width:28px; height:10px; border-radius:10px 10px 4px 4px;
+      background:#5b3b2d; margin:-2px auto 0;
+    }
+    .decor-child .body{
+      width:30px; height:28px; margin:2px auto 0; border-radius:12px 12px 8px 8px;
+      background:linear-gradient(180deg,#ff8fb1,#ff6b93);
+      position:relative;
+    }
+    .decor-child .arm{
+      position:absolute; top:28px; width:10px; height:28px;
+      background:#ffd9b8; border-radius:8px;
+    }
+    .decor-child .arm.left{ left:6px; transform:rotate(16deg); }
+    .decor-child .arm.right{ right:6px; transform:rotate(-16deg); }
+    .decor-child .leg-wrap{
+      display:flex; justify-content:center; gap:6px; margin-top:2px;
+    }
+    .decor-child .leg{
+      width:9px; height:24px; border-radius:7px; background:#4f6b86;
+    }
+    .decor-child.one{ left:232px; bottom:206px; }
+    .decor-child.two{
+      right:210px; bottom:210px; transform:scale(.94); animation-delay:.8s;
+    }
+    .decor-child.two .body{
+      background:linear-gradient(180deg,#7cc8ff,#4098ff);
+    }
+    .decor-child.two .hair{
+      background:#2f2b40;
+    }
+
+    .decor-butterfly{
+      position:absolute; z-index:1; pointer-events:none; font-size:20px;
+      animation:butterFly 5.2s ease-in-out infinite;
+      opacity:.9;
+    }
+    .decor-butterfly.b1{ left:340px; top:122px; }
+    .decor-butterfly.b2{ right:320px; top:142px; animation-delay:1.1s; }
+    @keyframes butterFly{
+      0%,100%{ transform:translateY(0) translateX(0) rotate(0deg); }
+      25%{ transform:translateY(-8px) translateX(8px) rotate(8deg); }
+      50%{ transform:translateY(-2px) translateX(14px) rotate(-6deg); }
+      75%{ transform:translateY(-10px) translateX(4px) rotate(5deg); }
+    }
+
+    @keyframes gentleBob{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-5px); }
+    }
+
+    @media (max-width: 640px){
+      .decor-animal.cat{ right:34px; bottom:196px; font-size:32px; }
+      .decor-animal.rabbit{ left:78px; bottom:200px; font-size:29px; }
+      .decor-child.one{ left:168px; bottom:198px; transform:scale(.88); }
+      .decor-child.two{ right:126px; bottom:200px; transform:scale(.82); }
+      .decor-butterfly.b1{ left:220px; top:136px; }
+      .decor-butterfly.b2{ right:146px; top:154px; }
+    }
+
 </style>
 </head>
 <body>
@@ -551,6 +649,12 @@
   <div class="game" id="gameArea">
     <div class="sky"></div>
     <div class="sun"></div>
+    <div class="decor-cloud small c2" style="left:250px; top:28px;"></div>
+    <div class="decor-cloud large c3" style="right:240px; top:34px; transform:scale(.88);"></div>
+    <div class="decor-cloud small c4" style="left:420px; top:92px; transform:scale(.82);"></div>
+    <div class="decor-butterfly b1">🦋</div>
+    <div class="decor-butterfly b2">🦋</div>
+
     <div class="decor-cloud large" style="left:48px; top:34px;"></div>
     <div class="decor-cloud small" style="right:118px; top:82px;"></div>
     <div class="decor-bird" style="left:150px; top:64px;">︵︵</div>
@@ -588,6 +692,28 @@
     <div class="decor-shrub" style="right:118px; bottom:236px; width:76px;"></div>
     <div class="decor-flower" style="left:300px; bottom:236px;">🌼</div>
     <div class="decor-flower" style="right:286px; bottom:232px;">🌿</div>
+
+    
+    <div class="decor-animal rabbit">🐰</div>
+    <div class="decor-animal cat">🐱</div>
+
+    <div class="decor-child one">
+      <div class="head"></div>
+      <div class="hair"></div>
+      <div class="body"></div>
+      <div class="arm left"></div>
+      <div class="arm right"></div>
+      <div class="leg-wrap"><div class="leg"></div><div class="leg"></div></div>
+    </div>
+
+    <div class="decor-child two">
+      <div class="head"></div>
+      <div class="hair"></div>
+      <div class="body"></div>
+      <div class="arm left"></div>
+      <div class="arm right"></div>
+      <div class="leg-wrap"><div class="leg"></div><div class="leg"></div></div>
+    </div>
 
     <div class="ground"></div>
 
@@ -636,7 +762,7 @@ const GAME_CONFIG = {
   duration: 40,
   passScore: 100,
   spawnEveryMs: 1050,
-  moveSpeed: 3.15,
+  moveSpeed: 6.3,
   maxItems: 3
 };
 
