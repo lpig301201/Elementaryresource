@@ -197,12 +197,13 @@ body { min-height:100dvh; }
   position:relative; z-index:8; padding:10px 12px calc(14px + env(safe-area-inset-bottom));
   background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.48));
   backdrop-filter: blur(8px);
-  display:grid; grid-template-columns:72px 1fr 72px 1.2fr; gap:8px;
+  display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; align-items:stretch;
 }
 .ctrlBtn {
-  appearance:none; border:none; border-radius:18px; padding:14px 10px;
-  font-size:22px; font-weight:900; color:#fff;
+  appearance:none; border:none; border-radius:18px; min-height:64px; padding:12px 10px;
+  font-size:20px; font-weight:900; color:#fff;
   box-shadow:0 14px 24px rgba(20,50,80,.18);
+  display:flex; align-items:center; justify-content:center; gap:6px; text-align:center; line-height:1.15; white-space:nowrap;
 }
 #upBtn,#downBtn { background:linear-gradient(135deg,#60a5fa,#2563eb); }
 #attackBtn { background:linear-gradient(135deg,#fb923c,#f97316); font-size:20px; }
@@ -261,7 +262,7 @@ body { min-height:100dvh; }
   .player .helmet { width:42px; height:14px; }
   .player .body { width:44px; height:30px; }
   .player .weapon { top:34px; right:-6px; font-size:21px; }
-  .controls { grid-template-columns:62px 62px 1fr 92px; }
+  .controls { grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; }
   #attackBtn { font-size:18px; }
   .comboBarWrap { bottom:102px; }
   .ground { height:92px; }
@@ -275,7 +276,7 @@ body { min-height:100dvh; }
   .option { width:116px; min-height:68px; }
   .option .txt { font-size:14px; }
   .controls { gap:6px; padding:8px 10px calc(12px + env(safe-area-inset-bottom)); }
-  .ctrlBtn { border-radius:16px; padding:12px 8px; }
+  .ctrlBtn { border-radius:16px; min-height:56px; padding:10px 6px; font-size:17px; }
 }
 </style>
 </head>
@@ -365,8 +366,8 @@ body { min-height:100dvh; }
   </div>
 
   <div class="controls">
-    <button class="ctrlBtn" id="upBtn" type="button">⬆️</button>
-    <button class="ctrlBtn" id="downBtn" type="button">⬇️</button>
+    <button class="ctrlBtn" id="upBtn" type="button">⬆️ 上移</button>
+    <button class="ctrlBtn" id="downBtn" type="button">⬇️ 下移</button>
     <button class="ctrlBtn" id="attackBtn" type="button">⚔️ 攻擊</button>
     <button class="ctrlBtn" id="muteBtn" type="button">🔊 音效</button>
   </div>
