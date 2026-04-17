@@ -766,6 +766,41 @@ button, .ctrlBtn, .bigbtn {
   .grass { bottom: 50px !important; }
 }
 
+
+
+/* 依照截圖再修：拿掉底部橫條，讓第三軌延伸露出 */
+@media (max-width: 768px) {
+  .comboBarWrap { display:none !important; }
+  .playfield { top: 114px !important; bottom: -2px !important; }
+  .rail.r0 { top: 2px !important; }
+  .rail.r1 { top: 68px !important; }
+  .rail.r2 { top: 134px !important; }
+  .hitZone.r0, .hitTag.r0 { top: 2px !important; }
+  .hitZone.r1, .hitTag.r1 { top: 68px !important; }
+  .hitZone.r2, .hitTag.r2 { top: 134px !important; }
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 56px !important; }
+  .railLabel.r2 { top: 122px !important; }
+  .ground { height: 26px !important; opacity: .9; }
+  .grass { bottom: 24px !important; height: 14px !important; }
+  .controls { padding-top: 4px !important; }
+}
+
+@media (max-width: 430px) {
+  .playfield { top: 110px !important; }
+  .rail.r0 { top: 0 !important; }
+  .rail.r1 { top: 64px !important; }
+  .rail.r2 { top: 128px !important; }
+  .hitZone.r0, .hitTag.r0 { top: 0 !important; }
+  .hitZone.r1, .hitTag.r1 { top: 64px !important; }
+  .hitZone.r2, .hitTag.r2 { top: 128px !important; }
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 54px !important; }
+  .railLabel.r2 { top: 118px !important; }
+  .ground { height: 22px !important; }
+  .grass { bottom: 20px !important; height: 12px !important; }
+}
+
 </style>
 </head>
 <body>
