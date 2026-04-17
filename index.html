@@ -981,10 +981,10 @@ button, .ctrlBtn, .bigbtn {
   <div class="topbar">
     <div class="card hero">
       <div class="title">🌍 環保戰士：三軌淨化衝鋒</div>
-      <div class="sub">questions.xlsx 題庫版｜3列選項｜角色上下換軌擊打｜手機可玩</div>
+      <div class="sub">固定劇情任務版｜乾電池＋鋰電池回收流程｜3軌淨化闖關</div>
     </div>
     <div class="card stats">
-      <div class="stat"><span class="label">⏱ 時間</span><span class="value" id="timeText">40</span></div>
+      <div class="stat"><span class="label">📘 進度</span><span class="value" id="timeText">1/6</span></div>
       <div class="stat"><span class="label">⭐ 分數</span><span class="value" id="scoreText">0</span></div>
       <div class="stat"><span class="label">🔥 連擊</span><span class="value" id="comboText">0</span></div>
       <div class="stat"><span class="label">🎯 達標</span><span class="value">100</span></div>
@@ -1043,10 +1043,10 @@ button, .ctrlBtn, .bigbtn {
 
       <div class="overlay" id="startOverlay">
         <div class="panel">
-          <h1>⚔️ 三軌淨化試煉</h1>
-          <p>題目會顯示在上方，三個答案會分別跑在 <b>上 / 中 / 下</b> 三條軌道。</p>
-          <p>你要控制環保戰士上下移動，站到正確答案那一列，等它進入 <b>淨化圈</b> 後再出手！</p>
-          <p>答對 <b>+10 分</b>，連擊越高越有成就感；40 秒內達到 <b>100 分</b> 即完成挑戰！</p>
+          <h1>🔋 電池回收任務</h1>
+          <p>城鎮出現了亂丟的 <b>乾電池</b> 與 <b>鋰電池</b>！你要跟著劇情一路闖關，學會正確回收流程。</p>
+          <p>三個答案會跑在 <b>上 / 中 / 下</b> 三條軌道，控制環保戰士上下移動，等正確答案進入 <b>淨化圈</b> 後再出手！</p>
+          <p>每答對一題就推進任務進度；答對 <b>+10 分</b>，完成全部任務題目後即可結束並查看成果！</p>
           <button class="bigbtn" id="startBtn">開始挑戰</button>
         </div>
       </div>
@@ -1070,10 +1070,132 @@ button, .ctrlBtn, .bigbtn {
 </div>
 
 <script>
-const QUESTION_BANK = JSON.parse(decodeURIComponent(escape(atob("W3sidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi55Om5pav572QIiwgInF1ZXN0aW9uIjogIueTpuaWr+e9kOS4n+ajhOWJjemcgO+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuebtOaOpeS4nyJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLmjpLnqbrmsKPpq5QifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi5Yqg5rC0In1dLCAiYW5zd2VyIjogIkIiLCAiZXhwbGFpbiI6ICLpgb/lhY3niIbngrgiLCAiZ2FtZWNhdCI6ICLmiZPmk4ov54K45b2IIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi6Yuw6Zu75rGgIiwgInF1ZXN0aW9uIjogIueUqOmBjueahOihjOWLlembu+a6kOaHieWmguS9leiZleeQhu+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuS4gOiIrOWeg+WcviJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLos4fmupDlm57mlLbou4oifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi5bCI6ZaA5Zue5pS26bueIn1dLCAiYW5zd2VyIjogIkMiLCAiZXhwbGFpbiI6ICLpi7Dpm7vmsaDmmJPotbfngavpnIDlsIjploDlm57mlLYiLCAiZ2FtZWNhdCI6ICLmiZPmk4ov54K45b2IIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi5qaC5b+1IiwgInF1ZXN0aW9uIjogIuWbnuaUtuWPr+evgOecgeiDvea6kOWXju+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuWPr+S7pSJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLkuI3lj6/ku6UifV0sICJhbnN3ZXIiOiAiQSIsICJleHBsYWluIjogIua4m+WwkemWi+aOoSIsICJnYW1lY2F0IjogIuWwj+WtuOWggiJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIuamguW/tSIsICJxdWVzdGlvbiI6ICLlm57mlLbnmoTnm67nmoTmmK/vvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLmuJvlsJHmsaHmn5MifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi5aKe5Yqg5Z6D5Zy+In0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuaykuW3riJ9XSwgImFuc3dlciI6ICJBIiwgImV4cGxhaW4iOiAi55Kw5L+d5qC45b+DIiwgImdhbWVjYXQiOiAi5bCP5a245aCCIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi5qaC5b+1IiwgInF1ZXN0aW9uIjogIuWbnuaUtumcgOWIhumhnuWXju+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIumcgOimgSJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLkuI3pnIDopoEifV0sICJhbnN3ZXIiOiAiQSIsICJleHBsYWluIjogIuaPkOWNh+aViOeOhyIsICJnYW1lY2F0IjogIuWwj+WtuOWggiJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIuayuea8hue9kCIsICJxdWVzdGlvbiI6ICLmsrnmvIbnvZDmh4nlpoLkvZXomZXnkIbvvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLlm57mlLYifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi5YCS5o6JIn0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuWeg+WcviJ9XSwgImFuc3dlciI6ICJBIiwgImV4cGxhaW4iOiAi54m55q6K6JmV55CGIiwgImdhbWVjYXQiOiAi5omT5pOKL+eCuOW9iCJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIuamguW/tSIsICJxdWVzdGlvbiI6ICLnjrvnkoPnk7blm57mlLbliY3pnIDvvJ/vvIjlu7bkvLjpoYwxMu+8iSIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuaJk+egtCJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLmuIXnqbrlhaflrrnniakifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi6KOd5rC0In1dLCAiYW5zd2VyIjogIkIiLCAiZXhwbGFpbiI6ICLpgb/lhY3msaHmn5MiLCAiZ2FtZWNhdCI6ICLliIbpoZ4ifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLliIbpoZ4iLCAicXVlc3Rpb24iOiAi546755KD5oeJ5aaC5L2V5Lif5qOE77yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5YyF5aW9In0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuebtOaOpeS4nyJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLkuJ/msrMifV0sICJhbnN3ZXIiOiAiQSIsICJleHBsYWluIjogIumBv+WFjeWPl+WCtyIsICJnYW1lY2F0IjogIuWwj+WtuOWggi/ngrjlvYgifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLmlbTnkIYiLCAicXVlc3Rpb24iOiAi57SZ566x5Zue5pS25YmN6ZyA77yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5oqY55aKIn0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuaVtOeuseS4nyJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLms6HmsLQifV0sICJhbnN3ZXIiOiAiQSIsICJleHBsYWluIjogIuevgOecgeepuumWkyIsICJnYW1lY2F0IjogIuWwj+WtuOWggi/ngrjlvYgifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLliIbpoZ4iLCAicXVlc3Rpb24iOiAi57SZ6aSQ55uS5oeJ5aaC5L2V6JmV55CG77yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5Zue5pS2In0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuS4gOiIrOWeg+WcviJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLlu5rppJgifV0sICJhbnN3ZXIiOiAiQiIsICJleHBsYWluIjogIuayvuayueS4jeWPr+WbnuaUtiIsICJnYW1lY2F0IjogIuWwj+WtuOWggi/ngrjlvYgifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLmpoLlv7UiLCAicXVlc3Rpb24iOiAi57SZ6aGe5Zue5pS25YmN6ZyA6KaB77yf77yI5bu25Ly46aGMMTfvvIkiLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLmuIXmtJcifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi5aOT5bmzIn0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIueHkuaOiSJ9XSwgImFuc3dlciI6ICJCIiwgImV4cGxhaW4iOiAi5pa55L6/5Zue5pS2IiwgImdhbWVjYXQiOiAi5YiG6aGeIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi5qaC5b+1IiwgInF1ZXN0aW9uIjogIua4m+WhkeaWueW8j++8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIumHjeikh+S9v+eUqCJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLkuJ/mjokifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi54Sa54eSIn1dLCAiYW5zd2VyIjogIkEiLCAiZXhwbGFpbiI6ICLmuJvph48iLCAiZ2FtZWNhdCI6ICLlsI/lrbjloIIifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLmpoLlv7UiLCAicXVlc3Rpb24iOiAi5aGR6Iag55O25oeJ6Kmy5Lif5Yiw5ZOq5LiA6aGe77yf77yI5bu25Ly46aGMMe+8iSIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuS4gOiIrOWeg+WcviJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLos4fmupDlm57mlLYifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi5bua6aSYIn1dLCAiYW5zd2VyIjogIkIiLCAiZXhwbGFpbiI6ICLlj6/lho3liKnnlKgiLCAiZ2FtZWNhdCI6ICLliIbpoZ4ifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLliIbpoZ4iLCAicXVlc3Rpb24iOiAi5aGR6Iag6KKL5Lm+5reo5Y+v77yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5Zue5pS2In0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuWeg+WcviJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLlu5rppJgifV0sICJhbnN3ZXIiOiAiQSIsICJleHBsYWluIjogIuimluaDheazgSIsICJnYW1lY2F0IjogIuWwj+WtuOWggi/ngrjlvYgifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLmu4XngavlmagiLCAicXVlc3Rpb24iOiAi5ruF54Gr5Zmo5oeJ5aaC5L2V6JmV55CG77yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5Z6D5Zy+In0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuWQiOagvOa2iOmYsuWZqOadkOWVhiJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLkuJ/msrMifV0sICJhbnN3ZXIiOiAiQiIsICJleHBsYWluIjogIumrmOWjk+WuueWZqCIsICJnYW1lY2F0IjogIuaJk+aTii/ngrjlvYgifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLovrLol6XnvZAiLCAicXVlc3Rpb24iOiAi6L6y6Jel572Q5oeJ5aaC5L2V5Zue5pS277yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5riF5rSX5b6M5Zue5pS2In0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuebtOaOpeS4nyJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLln4vlnJ8ifV0sICJhbnN3ZXIiOiAiQSIsICJleHBsYWluIjogIumBv+WFjeaxoeafkyIsICJnYW1lY2F0IjogIuaJk+aTii/ngrjlvYgifSwgeyJ0eXBlIjogIuWWrumBuCIsICJjYXRlZ29yeSI6ICLpi7Dpm7vmsaAiLCAicXVlc3Rpb24iOiAi6Zu75rGg5Y+v5Lul5Lif5LiA6Iis5Z6D5Zy+5ZeO77yfIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi5Y+v5LulIn0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuS4jeWPr+S7pSJ9XSwgImFuc3dlciI6ICJCIiwgImV4cGxhaW4iOiAi5piT5byV55m854Gr54G9IiwgImdhbWVjYXQiOiAi5omT5pOKL+eCuOW9iCJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIueuoemBkyIsICJxdWVzdGlvbiI6ICLpm7vmsaDlm57mlLbpu57lnKjlk6rvvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLotoXllYYifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi6aSQ5buzIn0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuWFrOWckiJ9XSwgImFuc3dlciI6ICJBIiwgImV4cGxhaW4iOiAi5bi46KaL6Kit6bueIiwgImdhbWVjYXQiOiAi5bCP5a245aCCIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi6Zu75rGgIiwgInF1ZXN0aW9uIjogIumbu+axoOaHieWbnuaUtuaWvO+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIui2heWVhiJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLkuIDoiKzlnoPlnL7ou4oifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi5rC05rqdIn1dLCAiYW5zd2VyIjogIkEiLCAiZXhwbGFpbiI6ICLoqK3mnInlm57mlLbpu54iLCAiZ2FtZWNhdCI6ICLmiZPmk4ov54K45b2IIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi5Zm06Zyn572QIiwgInF1ZXN0aW9uIjogIuWZtOmcp+e9kOWbnuaUtuWJjemcgO+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuaOkuepuuS6pOWbnuaUtui7iiJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLnm7TmjqXkuJ8ifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi5Yqg54axIn1dLCAiYW5zd2VyIjogIkEiLCAiZXhwbGFpbiI6ICLpgb/lhY3niIbngrgiLCAiZ2FtZWNhdCI6ICLmiZPmk4ov54K45b2IIn0sIHsidHlwZSI6ICLllq7pgbgiLCAiY2F0ZWdvcnkiOiAi5qaC5b+1IiwgInF1ZXN0aW9uIjogIuW7mumkmOWPr+S7peWBmuS7gOm6vO+8n++8iOW7tuS8uOmhjDE077yJIiwgIm9wdGlvbnMiOiBbeyJsYWJlbCI6ICJBIiwgInRleHQiOiAi54Sa5YyWIn0sIHsibGFiZWwiOiAiQiIsICJ0ZXh0IjogIuWghuiCpSJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLmjqnln4sifV0sICJhbnN3ZXIiOiAiQiIsICJleHBsYWluIjogIuWPr+ijveaIkOiCpeaWmSIsICJnYW1lY2F0IjogIuWIhumhniJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIuWIhumhniIsICJxdWVzdGlvbiI6ICLlu5rppJjmh4nvvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLlu5rppJjmobYifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi5Zue5pS2In0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuWeg+WcviJ9XSwgImFuc3dlciI6ICJBIiwgImV4cGxhaW4iOiAi5YiG6aGe6JmV55CGIiwgImdhbWVjYXQiOiAi5bCP5a245aCCL+eCuOW9iCJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIueHiOeuoSIsICJxdWVzdGlvbiI6ICLlu6Lnh4jnrqHmh4nlpoLkvZXomZXnkIbvvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLlnoPlnL4ifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi6Ziy56C05YyF6KOd5Lqk5Zue5pS26LuKIn0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuaJk+egtOS4nyJ9XSwgImFuc3dlciI6ICJCIiwgImV4cGxhaW4iOiAi5ZCr5rGe5pyJ5q+SIiwgImdhbWVjYXQiOiAi5omT5pOKL+eCuOW9iCJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIuWIhumhniIsICJxdWVzdGlvbiI6ICLpi4HnvZDmh4nvvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLlm57mlLYifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi5Z6D5Zy+In0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuW7mumkmCJ9XSwgImFuc3dlciI6ICJBIiwgImV4cGxhaW4iOiAi5Y+v5YaN5Yip55SoIiwgImdhbWVjYXQiOiAi5bCP5a245aCCL+eCuOW9iCJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIjNDIiwgInF1ZXN0aW9uIjogIuiIiuaJi+apn+aHieWmguS9leiZleeQhu+8nyIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIuWbnuaUtiJ9LCB7ImxhYmVsIjogIkIiLCAidGV4dCI6ICLlnoPlnL4ifSwgeyJsYWJlbCI6ICJDIiwgInRleHQiOiAi54Sa54eSIn1dLCAiYW5zd2VyIjogIkEiLCAiZXhwbGFpbiI6ICLlkKvph43ph5HlsawiLCAiZ2FtZWNhdCI6ICLmiZPmk4ov54K45b2IIn0sIHsidHlwZSI6ICLpoYzlnosiLCAiY2F0ZWdvcnkiOiAi6aGe5YilIiwgInF1ZXN0aW9uIjogIumhjOebriIsICJvcHRpb25zIjogW3sibGFiZWwiOiAiQSIsICJ0ZXh0IjogIumBuOmghUEifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi6YG46aCFQiJ9LCB7ImxhYmVsIjogIkMiLCAidGV4dCI6ICLpgbjpoIVDIn1dLCAiYW5zd2VyIjogIuato+eiuuetlOahiCIsICJleHBsYWluIjogIuiqquaYjiIsICJnYW1lY2F0IjogIumBiuaIsuW7uuitsCJ9LCB7InR5cGUiOiAi5Zau6YG4IiwgImNhdGVnb3J5IjogIua4hea9lCIsICJxdWVzdGlvbiI6ICLlr7bnibnnk7blm57mlLbliY3pnIDvvJ8iLCAib3B0aW9ucyI6IFt7ImxhYmVsIjogIkEiLCAidGV4dCI6ICLmuIXmtJflo5PmiYEifSwgeyJsYWJlbCI6ICJCIiwgInRleHQiOiAi55u05o6l5LifIn0sIHsibGFiZWwiOiAiQyIsICJ0ZXh0IjogIuWJqueijiJ9XSwgImFuc3dlciI6ICJBIiwgImV4cGxhaW4iOiAi5o+Q5Y2H5Zue5pS25ZOB6LOqIiwgImdhbWVjYXQiOiAi5bCP5a245aCCL+eCuOW9iCJ9XQ=="))));
+const QUESTION_BANK = [
+  {
+    "category": "第1關｜街角巡查",
+    "question": "用完的乾電池應該怎麼做？",
+    "options": [
+      {
+        "label": "A",
+        "text": "集中回收"
+      },
+      {
+        "label": "B",
+        "text": "丟一般垃圾"
+      },
+      {
+        "label": "C",
+        "text": "隨便丟抽屜"
+      }
+    ],
+    "answer": "A",
+    "explain": "乾電池屬公告應回收項目，應集中後交給回收點。　教學重點：乾電池不可混入一般垃圾。"
+  },
+  {
+    "category": "第2關｜鋰電池警報",
+    "question": "鋰電池回收前要注意什麼？",
+    "options": [
+      {
+        "label": "A",
+        "text": "電極絕緣並避免擠壓破損"
+      },
+      {
+        "label": "B",
+        "text": "直接丟進垃圾袋"
+      },
+      {
+        "label": "C",
+        "text": "摔壞再丟"
+      }
+    ],
+    "answer": "A",
+    "explain": "鋰電池若短路、受損或受壓，可能引發發熱甚至火災。　教學重點：鋰電池回收前先做安全處理。"
+  },
+  {
+    "category": "第3關｜分類整備",
+    "question": "電池回收時正確行為是？",
+    "options": [
+      {
+        "label": "A",
+        "text": "分類集中再交回收"
+      },
+      {
+        "label": "B",
+        "text": "混在一般垃圾裡"
+      },
+      {
+        "label": "C",
+        "text": "和紙類一起回收"
+      }
+    ],
+    "answer": "A",
+    "explain": "先分類、集中，再交給合法回收點，流程最安全。　教學重點：不要把電池混入其他回收物或垃圾。"
+  },
+  {
+    "category": "第4關｜回收據點",
+    "question": "鋰電池可以交到哪裡回收？",
+    "options": [
+      {
+        "label": "A",
+        "text": "超商、量販店或指定回收點"
+      },
+      {
+        "label": "B",
+        "text": "廚餘桶"
+      },
+      {
+        "label": "C",
+        "text": "一般垃圾車"
+      }
+    ],
+    "answer": "A",
+    "explain": "常見回收據點包含超商、量販店與指定回收設施。　教學重點：知道正確回收去向。"
+  },
+  {
+    "category": "第5關｜危險排除",
+    "question": "發現膨脹或受損的鋰電池，應該怎麼做？",
+    "options": [
+      {
+        "label": "A",
+        "text": "先隔離並儘快送指定回收"
+      },
+      {
+        "label": "B",
+        "text": "繼續使用到沒電"
+      },
+      {
+        "label": "C",
+        "text": "拿尖銳物戳破"
+      }
+    ],
+    "answer": "A",
+    "explain": "膨脹或受損的鋰電池風險高，應避免再使用並妥善處理。　教學重點：異常鋰電池要小心隔離，不可破壞。"
+  },
+  {
+    "category": "第6關｜守護城市",
+    "question": "電池為什麼一定要回收？",
+    "options": [
+      {
+        "label": "A",
+        "text": "避免污染環境與降低火災風險"
+      },
+      {
+        "label": "B",
+        "text": "只是因為很占空間"
+      },
+      {
+        "label": "C",
+        "text": "其實不回收也沒差"
+      }
+    ],
+    "answer": "A",
+    "explain": "正確回收能減少重金屬污染，也能降低鋰電池起火風險。　教學重點：建立回收的環境與安全觀念。"
+  }
+];
+
+let storyIndex = 0;
 
 const GAME = {
-  duration: 40,
   passScore: 100,
   speed: 1.3,
   laneTop: [10,128,246],
@@ -1100,15 +1222,44 @@ const endDesc = document.getElementById('endDesc');
 
 let score = 0;
 let combo = 0;
-let timeLeft = GAME.duration;
 let laneIndex = 1;
 let currentQuestion = null;
 let activeOptions = [];
 let animationId = null;
-let timerId = null;
 let running = false;
 let inputLocked = false;
 let muted = false;
+
+
+function centerRails(){
+  const rails = [...playfield.querySelectorAll('.rail')];
+  const labels = [...playfield.querySelectorAll('.railLabel')];
+  const zones = [...playfield.querySelectorAll('.hitZone')];
+  const tags = [...playfield.querySelectorAll('.hitTag')];
+  if(rails.length !== 3 || zones.length !== 3 || tags.length !== 3 || labels.length !== 3) return;
+
+  const pfH = playfield.clientHeight || playfield.offsetHeight || 260;
+  const isMobile = window.innerWidth <= 768;
+  const railH = isMobile ? 56 : 92;
+  const totalH = isMobile ? Math.min(pfH - 10, 56*3 + 18*2) : 92*3 + 26*2;
+  const gap = (totalH - railH*3) / 2;
+  const start = Math.max(2, (pfH - totalH) / 2 - (isMobile ? 8 : 0));
+  const hitLeft = GAME.hitLeft();
+  const hitW = GAME.hitWidth();
+
+  for(let i=0;i<3;i++){
+    const top = Math.round(start + i * (railH + gap));
+    rails[i].style.top = top + 'px';
+    rails[i].style.height = railH + 'px';
+    zones[i].style.top = top + 'px';
+    zones[i].style.height = railH + 'px';
+    zones[i].style.left = hitLeft + 'px';
+    zones[i].style.width = hitW + 'px';
+    tags[i].style.top = top + 'px';
+    tags[i].style.left = hitLeft + 'px';
+    labels[i].style.top = (top - (isMobile ? 10 : 16)) + 'px';
+  }
+}
 
 function getRailRect(idx){
   const rail = playfield.querySelector(`.rail.r${idx}`);
@@ -1129,11 +1280,12 @@ function movePlayerToLane(idx){
   const playerOffset = window.innerWidth <= 768 ? 2 : 0;
   player.style.top = (lanePx(laneIndex, player.offsetHeight) + playerOffset) + 'px';
 }
-window.addEventListener('resize', () => movePlayerToLane(laneIndex));
+window.addEventListener('resize', () => { centerRails(); movePlayerToLane(laneIndex); activeOptions.forEach(item => item.el.style.top = lanePx(item.lane, item.el.offsetHeight) + 'px'); });
+centerRails();
 movePlayerToLane(1);
 
 function updateHUD(){
-  timeText.textContent = timeLeft;
+  timeText.textContent = `${Math.min(storyIndex + 1, QUESTION_BANK.length)}/${QUESTION_BANK.length}`;
   scoreText.textContent = score;
   comboText.textContent = combo;
   comboFill.style.width = Math.min(combo, 10) * 10 + '%';
@@ -1148,34 +1300,16 @@ function shuffle(arr){
 }
 
 function pickQuestion(){
-  const q = shuffle(QUESTION_BANK)[0];
+  const q = QUESTION_BANK[storyIndex % QUESTION_BANK.length];
+  storyIndex += 1;
   const opts = q.options.filter(o => o && o.text);
   const correct = opts.find(o => o.label === q.answer) || opts[0];
-  let wrongs = opts.filter(o => o.label !== q.answer);
-
-  // 若只有兩個選項，補一個其他題庫的干擾選項
-  if(wrongs.length < 2){
-    const distractors = shuffle(QUESTION_BANK)
-      .flatMap(item => item.options || [])
-      .filter(o => o && o.text && o.text !== correct.text && !wrongs.some(w => w.text === o.text));
-    while(wrongs.length < 2 && distractors.length){
-      wrongs.push(distractors.shift());
-    }
-  }
-  // 極端情況仍不足時，用通用錯誤選項補
-  const fallbacks = ['直接丟掉','隨便分類','丟一般垃圾','不用處理'];
-  let fbIndex = 0;
-  while(wrongs.length < 2){
-    const text = fallbacks[fbIndex++ % fallbacks.length];
-    if(text !== correct.text && !wrongs.some(w => w.text === text)){
-      wrongs.push({label:'X',text});
-    }
-  }
+  const wrongs = opts.filter(o => o.label !== q.answer).slice(0, 2);
 
   const cards = shuffle([
     { text: correct.text, correct: true },
-    { text: wrongs[0].text, correct: false },
-    { text: wrongs[1].text, correct: false },
+    { text: wrongs[0]?.text || '丟一般垃圾', correct: false },
+    { text: wrongs[1]?.text || '隨手亂丟', correct: false },
   ]).map((item, idx) => ({ ...item, lane: idx }));
 
   return {
@@ -1190,7 +1324,7 @@ function renderQuestion(){
   clearActiveOptions();
   currentQuestion = pickQuestion();
   questionText.textContent = currentQuestion.question;
-  tipBadge.textContent = currentQuestion.category ? `題型：${currentQuestion.category}` : '移動到正確列再淨化攻擊！';
+  tipBadge.textContent = currentQuestion.category || '移動到正確列再淨化攻擊！';
 
   activeOptions = currentQuestion.cards.map((card, i) => {
     const el = document.createElement('div');
@@ -1247,6 +1381,7 @@ function attack(){
     combo = 0;
     updateHUD();
     feedback('空揮！');
+    comboHint.textContent = '等答案進到淨化圈，再出手會更穩！';
     beep('bad');
     setTimeout(() => inputLocked = false, 180);
     return;
@@ -1256,11 +1391,13 @@ function attack(){
   if(target.correct){
     score += 10;
     combo += 1;
-    feedback(combo >= 5 ? '✨ 淨化連擊！' : '✨ 淨化成功！');
+    feedback(combo >= 5 ? '✨ 任務推進！' : '✨ 淨化成功！');
+    comboHint.textContent = currentQuestion.explain || '答對了，繼續下一關！';
     beep(combo >= 5 ? 'combo' : 'ok');
   } else {
     combo = 0;
-    feedback('💀 污染擴散');
+    feedback('💀 選錯了！');
+    comboHint.textContent = currentQuestion.explain || '再試一次，記住正確回收方式！';
     beep('bad');
   }
 
@@ -1269,7 +1406,12 @@ function attack(){
   updateHUD();
   setTimeout(() => {
     inputLocked = false;
-    if(running) renderQuestion();
+    if(!running) return;
+    if(target.correct && storyIndex >= QUESTION_BANK.length){
+      endGame();
+    } else {
+      renderQuestion();
+    }
   }, 260);
 }
 
@@ -1291,6 +1433,7 @@ function gameLoop(){
     combo = 0;
     updateHUD();
     feedback('錯過了！');
+    comboHint.textContent = currentQuestion.explain || '別急，下一關再把正確答案打回來！';
     beep('bad');
     renderQuestion();
   }
@@ -1301,35 +1444,29 @@ function gameLoop(){
 function endGame(){
   running = false;
   cancelAnimationFrame(animationId);
-  clearInterval(timerId);
   clearActiveOptions();
   endOverlay.classList.remove('hidden');
-  const passed = score >= GAME.passScore;
-  endTitle.textContent = passed ? '🎉 挑戰成功！' : '🌱 再試一次！';
-  endDesc.textContent = passed
-    ? `你得到 ${score} 分，成功完成淨化任務！最高連擊很有感，現場活動版已可直接使用。`
-    : `你得到 ${score} 分，離 100 分還差一點點。多利用上下換軌，等答案進淨化圈再出手會更穩！`;
+  const completed = storyIndex >= QUESTION_BANK.length;
+  endTitle.textContent = completed ? '🎉 任務完成！' : '🌱 任務中止';
+  endDesc.textContent = completed
+    ? `你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個電池回收任務！乾電池與鋰電池的正確流程，已經被你成功守護。`
+    : `你得到 ${score} 分，任務尚未完成。記得先分類、包覆、再送回收點！`;
 }
 
 function startGame(){
   score = 0;
   combo = 0;
-  timeLeft = GAME.duration;
   running = true;
   inputLocked = false;
+  storyIndex = 0;
   updateHUD();
+  centerRails();
   movePlayerToLane(1);
   renderQuestion();
   startOverlay.classList.add('hidden');
   endOverlay.classList.add('hidden');
   cancelAnimationFrame(animationId);
-  clearInterval(timerId);
   animationId = requestAnimationFrame(gameLoop);
-  timerId = setInterval(() => {
-    timeLeft -= 1;
-    updateHUD();
-    if(timeLeft <= 0) endGame();
-  }, 1000);
 }
 
 document.getElementById('startBtn').addEventListener('click', startGame);
