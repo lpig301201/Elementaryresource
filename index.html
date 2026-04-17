@@ -1120,13 +1120,14 @@ function lanePx(idx, itemHeight = 0){
   const { top, height } = getRailRect(idx);
   const base = top + Math.max(0, (height - itemHeight) / 2);
   // 手機 LINE 瀏覽器中，圖卡視覺中心會比實際盒模型略高，往下補一點更貼齊軌道
-  const mobileVisualOffset = window.innerWidth <= 768 ? 8 : 0;
+  const mobileVisualOffset = window.innerWidth <= 768 ? -6 : 0;
   return base + mobileVisualOffset;
 }
 
 function movePlayerToLane(idx){
   laneIndex = Math.max(0, Math.min(2, idx));
-  player.style.top = lanePx(laneIndex, player.offsetHeight) + 'px';
+  const playerOffset = window.innerWidth <= 768 ? 2 : 0;
+  player.style.top = (lanePx(laneIndex, player.offsetHeight) + playerOffset) + 'px';
 }
 window.addEventListener('resize', () => movePlayerToLane(laneIndex));
 movePlayerToLane(1);
