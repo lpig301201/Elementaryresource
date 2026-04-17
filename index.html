@@ -580,6 +580,111 @@ button, .ctrlBtn, .bigbtn {
   }
 }
 
+
+
+/* LINE 手機瀏覽器追加修正：把軌道遊戲區完整露出 */
+@media (max-width: 768px) {
+  body { overscroll-behavior:none; }
+  .app { height:100dvh; }
+  .topbar { padding:8px 10px 6px !important; gap:6px !important; }
+  .hero { padding:10px 12px !important; border-radius:18px !important; }
+  .title { font-size:18px !important; }
+  .sub { display:none !important; }
+  .stats { padding:6px !important; gap:4px !important; }
+  .stat { padding:6px 2px !important; border-radius:14px !important; }
+  .stat .label { font-size:10px !important; }
+  .stat .value { font-size:14px !important; }
+
+  .game {
+    flex:none !important;
+    height:calc(100dvh - 286px - env(safe-area-inset-bottom)) !important;
+    min-height:430px !important;
+  }
+
+  .mission {
+    left:10px !important; right:10px !important; top:8px !important;
+    padding:10px 12px !important; border-radius:18px !important;
+    gap:6px !important;
+  }
+  .mission small { font-size:11px !important; margin-bottom:2px !important; }
+  .mission b { font-size:15px !important; line-height:1.25 !important; }
+  .badge { font-size:11px !important; padding:7px 10px !important; }
+
+  .tipbox {
+    top:86px !important; left:10px !important; right:10px !important;
+    padding:8px 10px !important; font-size:11px !important; line-height:1.4 !important;
+    border-radius:16px !important;
+  }
+  .tipbox .mini { font-size:11px !important; padding:4px 8px !important; }
+
+  .playfield { top:136px !important; bottom:6px !important; }
+  .rail { left:10px !important; right:10px !important; height:60px !important; }
+  .rail.r0 { top:2px !important; }
+  .rail.r1 { top:78px !important; }
+  .rail.r2 { top:154px !important; }
+
+  .railLabel { left:10px !important; font-size:10px !important; padding:4px 8px !important; }
+  .railLabel.r0 { top:-12px !important; }
+  .railLabel.r1 { top:64px !important; }
+  .railLabel.r2 { top:140px !important; }
+
+  .hitZone { left:86px !important; width:78px !important; height:60px !important; border-radius:18px !important; border-width:3px !important; }
+  .hitZone.r0 { top:2px !important; }
+  .hitZone.r1 { top:78px !important; }
+  .hitZone.r2 { top:154px !important; }
+
+  .hitTag { left:86px !important; font-size:10px !important; padding:4px 8px !important; transform:translateY(-10px) !important; }
+  .hitTag.r0 { top:2px !important; }
+  .hitTag.r1 { top:78px !important; }
+  .hitTag.r2 { top:154px !important; }
+
+  .option { width:108px !important; min-height:58px !important; padding:8px 8px 10px !important; border-radius:16px !important; }
+  .option .txt { font-size:13px !important; line-height:1.2 !important; }
+  .option .mark { font-size:11px !important; padding:4px 6px !important; }
+
+  .player { left:10px !important; width:54px !important; height:76px !important; }
+  .player .head { width:24px !important; height:24px !important; }
+  .player .helmet { width:30px !important; height:10px !important; }
+  .player .body { width:34px !important; height:24px !important; }
+  .player .weapon { top:28px !important; right:-4px !important; font-size:16px !important; }
+  .player .leg { width:7px !important; height:18px !important; }
+
+  .comboTip { bottom:12px !important; left:10px !important; right:10px !important; font-size:11px !important; }
+
+  .controls {
+    padding:8px 10px calc(10px + env(safe-area-inset-bottom)) !important;
+    gap:8px !important;
+  }
+  .ctrlBtn { min-height:54px !important; padding:10px 8px !important; font-size:18px !important; border-radius:16px !important; }
+  #muteBtn { font-size:17px !important; }
+}
+
+@media (max-width: 430px) {
+  .game { height:calc(100dvh - 276px - env(safe-area-inset-bottom)) !important; min-height:400px !important; }
+  .mission b { font-size:14px !important; }
+  .tipbox { top:82px !important; font-size:10px !important; }
+  .playfield { top:130px !important; }
+  .rail { height:56px !important; }
+  .rail.r0 { top:0 !important; }
+  .rail.r1 { top:72px !important; }
+  .rail.r2 { top:144px !important; }
+  .hitZone { left:82px !important; width:72px !important; height:56px !important; }
+  .hitZone.r0 { top:0 !important; }
+  .hitZone.r1 { top:72px !important; }
+  .hitZone.r2 { top:144px !important; }
+  .hitTag { left:82px !important; }
+  .hitTag.r0 { top:0 !important; }
+  .hitTag.r1 { top:72px !important; }
+  .hitTag.r2 { top:144px !important; }
+  .railLabel.r0 { top:-12px !important; }
+  .railLabel.r1 { top:60px !important; }
+  .railLabel.r2 { top:132px !important; }
+  .option { width:98px !important; min-height:54px !important; }
+  .option .txt { font-size:12px !important; }
+  .player { width:50px !important; height:70px !important; }
+  .ctrlBtn { min-height:52px !important; font-size:17px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -587,6 +692,7 @@ button, .ctrlBtn, .bigbtn {
   <div class="topbar">
     <div class="card hero">
       <div class="title">🌍 環保戰士：三軌淨化衝鋒</div>
+      <div class="sub">questions.xlsx 題庫版｜3列選項｜角色上下換軌擊打｜手機可玩</div>
     </div>
     <div class="card stats">
       <div class="stat"><span class="label">⏱ 時間</span><span class="value" id="timeText">40</span></div>
@@ -651,7 +757,7 @@ button, .ctrlBtn, .bigbtn {
           <h1>⚔️ 三軌淨化試煉</h1>
           <p>題目會顯示在上方，三個答案會分別跑在 <b>上 / 中 / 下</b> 三條軌道。</p>
           <p>你要控制環保戰士上下移動，站到正確答案那一列，等它進入 <b>淨化圈</b> 後再出手！</p>
-          <p>答對 <b>+10 分</b>40 秒內達到 <b>100 分</b> 即完成挑戰！</p>
+          <p>答對 <b>+10 分</b>，連擊越高越有成就感；40 秒內達到 <b>100 分</b> 即完成挑戰！</p>
           <button class="bigbtn" id="startBtn">開始挑戰</button>
         </div>
       </div>
