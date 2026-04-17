@@ -967,6 +967,13 @@ button, .ctrlBtn, .bigbtn {
   .ctrlBtn { min-height: 42px !important; font-size: 14px !important; }
 }
 
+
+/* 軌道與選項卡對齊修正 */
+@media (max-width: 768px) {
+  .rail, .hitZone { box-sizing:border-box; }
+  .option { display:flex; align-items:center; justify-content:center; }
+}
+
 </style>
 </head>
 <body>
@@ -1103,14 +1110,25 @@ let running = false;
 let inputLocked = false;
 let muted = false;
 
-function lanePx(idx){
-  return (window.innerWidth <= 768 ? GAME.laneTopMobile : GAME.laneTop)[idx];
+function getRailRect(idx){
+  const rail = playfield.querySelector(`.rail.r${idx}`);
+  if(!rail) return { top: (window.innerWidth <= 768 ? GAME.laneTopMobile : GAME.laneTop)[idx], height: 56 };
+  return { top: rail.offsetTop, height: rail.offsetHeight };
+}
+
+function lanePx(idx, itemHeight = 0){
+  const { top, height } = getRailRect(idx);
+  const base = top + Math.max(0, (height - itemHeight) / 2);
+  // 手機 LINE 瀏覽器中，圖卡視覺中心會比實際盒模型略高，往下補一點更貼齊軌道
+  const mobileVisualOffset = window.innerWidth <= 768 ? 8 : 0;
+  return base + mobileVisualOffset;
 }
 
 function movePlayerToLane(idx){
   laneIndex = Math.max(0, Math.min(2, idx));
-  player.style.top = (lanePx(laneIndex) - 8) + 'px';
+  player.style.top = lanePx(laneIndex, player.offsetHeight) + 'px';
 }
+window.addEventListener('resize', () => movePlayerToLane(laneIndex));
 movePlayerToLane(1);
 
 function updateHUD(){
@@ -1176,10 +1194,10 @@ function renderQuestion(){
   activeOptions = currentQuestion.cards.map((card, i) => {
     const el = document.createElement('div');
     el.className = 'option ' + (card.correct ? 'correct' : 'wrong');
-    el.style.top = (lanePx(card.lane) + 3) + 'px';
     el.style.left = (window.innerWidth + i * 92) + 'px';
     el.innerHTML = `<div class="tag">${card.correct ? '淨化目標' : '污染怪物'}</div><div class="txt">${card.text}</div>`;
     playfield.appendChild(el);
+    el.style.top = lanePx(card.lane, el.offsetHeight) + 'px';
     return { ...card, el, x: window.innerWidth + i * 92, hit:false };
   });
 }
