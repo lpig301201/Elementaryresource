@@ -685,6 +685,87 @@ button, .ctrlBtn, .bigbtn {
   .ctrlBtn { min-height:52px !important; font-size:17px !important; }
 }
 
+
+
+/* LINE 瀏覽器超壓縮版：讓三軌完整露出 */
+@media (max-width: 768px) {
+  html, body, .app { height: 100svh; min-height: 100svh; }
+  .topbar { padding: 6px 8px 4px !important; gap: 6px !important; }
+  .hero { padding: 8px 10px !important; border-radius: 18px !important; }
+  .title { font-size: 16px !important; }
+  .sub { display:none !important; }
+  .stats { padding: 6px !important; gap: 4px !important; }
+  .stat { padding: 6px 2px !important; border-radius: 12px !important; }
+  .stat .label { font-size: 10px !important; margin-bottom: 0 !important; }
+  .stat .value { font-size: 14px !important; }
+
+  .mission { top: 4px !important; left: 8px !important; right: 8px !important; padding: 8px 10px !important; gap: 6px !important; border-radius: 18px !important; }
+  .mission small { font-size: 10px !important; margin-bottom: 2px !important; }
+  .mission b { font-size: 15px !important; line-height: 1.2 !important; }
+  .badge { font-size: 11px !important; padding: 6px 10px !important; }
+
+  .tipbox { top: 72px !important; left: 8px !important; right: 8px !important; padding: 7px 9px !important; font-size: 11px !important; line-height: 1.35 !important; border-radius: 16px !important; }
+  .tipbox .mini { padding: 3px 8px !important; margin-right: 4px !important; font-size: 11px !important; }
+
+  .playfield { top: 122px !important; }
+  .rail { left: 8px !important; right: 8px !important; height: 54px !important; border-top-width: 2px !important; border-bottom-width: 2px !important; }
+  .rail.r0 { top: 4px !important; }
+  .rail.r1 { top: 74px !important; }
+  .rail.r2 { top: 144px !important; }
+  .railLabel { left: 10px !important; font-size: 10px !important; padding: 4px 8px !important; }
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 60px !important; }
+  .railLabel.r2 { top: 130px !important; }
+
+  .hitZone { left: 84px !important; width: 72px !important; height: 54px !important; border-radius: 16px !important; border-width: 3px !important; box-shadow: 0 0 0 4px rgba(255,255,255,.10) !important; }
+  .hitZone.r0 { top: 4px !important; }
+  .hitZone.r1 { top: 74px !important; }
+  .hitZone.r2 { top: 144px !important; }
+  .hitTag { left: 84px !important; font-size: 10px !important; padding: 4px 7px !important; }
+  .hitTag.r0 { top: 4px !important; }
+  .hitTag.r1 { top: 74px !important; }
+  .hitTag.r2 { top: 144px !important; }
+
+  .player { left: 10px !important; width: 52px !important; height: 72px !important; }
+  .player .head { width: 22px !important; height: 22px !important; }
+  .player .helmet { width: 28px !important; height: 10px !important; }
+  .player .body { width: 34px !important; height: 22px !important; }
+  .player .weapon { top: 24px !important; right: -4px !important; font-size: 16px !important; }
+  .player .legs { gap: 5px !important; margin-top: 2px !important; }
+  .player .leg { width: 7px !important; height: 17px !important; }
+
+  .option { width: 92px !important; min-height: 54px !important; padding: 6px 5px !important; border-radius: 14px !important; }
+  .option .tag { font-size: 10px !important; padding: 3px 6px !important; }
+  .option .txt { font-size: 11px !important; line-height: 1.15 !important; }
+  .option .emoji { font-size: 14px !important; }
+
+  .comboBarWrap { left: 8px !important; right: 8px !important; bottom: 64px !important; }
+  .comboHint { font-size: 10px !important; margin-bottom: 3px !important; }
+  .comboTrack { height: 10px !important; }
+  .ground { height: 58px !important; }
+  .grass { bottom: 54px !important; height: 18px !important; }
+
+  .controls { padding: 6px 8px calc(8px + env(safe-area-inset-bottom)) !important; gap: 6px !important; grid-template-columns: 1fr 1fr !important; }
+  .ctrlBtn { min-height: 44px !important; padding: 8px 6px !important; border-radius: 14px !important; font-size: 14px !important; }
+  #attackBtn, #muteBtn { font-size: 14px !important; }
+}
+
+@media (max-width: 430px) {
+  .playfield { top: 116px !important; }
+  .rail.r0 { top: 2px !important; }
+  .rail.r1 { top: 68px !important; }
+  .rail.r2 { top: 134px !important; }
+  .hitZone.r0, .hitTag.r0 { top: 2px !important; }
+  .hitZone.r1, .hitTag.r1 { top: 68px !important; }
+  .hitZone.r2, .hitTag.r2 { top: 134px !important; }
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 56px !important; }
+  .railLabel.r2 { top: 122px !important; }
+  .comboBarWrap { bottom: 60px !important; }
+  .ground { height: 54px !important; }
+  .grass { bottom: 50px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -788,9 +869,9 @@ const GAME = {
   passScore: 100,
   speed: 1.3,
   laneTop: [10,128,246],
-  laneTopMobile: [6,102,198],
-  hitLeft: () => window.innerWidth <= 768 ? 106 : 132,
-  hitWidth: () => window.innerWidth <= 768 ? 96 : 124
+  laneTopMobile: [4,74,144],
+  hitLeft: () => window.innerWidth <= 768 ? 84 : 132,
+  hitWidth: () => window.innerWidth <= 768 ? 72 : 124
 };
 
 const EMOJIS = ['♻️','🌱','🧴','🔋','🗞️','🥫','🧃','🪫','🍱','🗑️'];
