@@ -278,6 +278,308 @@ body { min-height:100dvh; }
   .controls { gap:6px; padding:8px 10px calc(12px + env(safe-area-inset-bottom)); }
   .ctrlBtn { border-radius:16px; min-height:56px; padding:10px 6px; font-size:17px; }
 }
+
+
+/* LINE 手機瀏覽器優化版 */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overscroll-behavior: none;
+}
+body {
+  min-height: 100svh;
+  min-height: 100dvh;
+}
+.app {
+  min-height: 100svh;
+  min-height: 100dvh;
+}
+button, .ctrlBtn, .bigbtn {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#playfield {
+  touch-action: pan-y;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .app {
+    height: 100svh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  .topbar {
+    padding: 8px 10px 6px;
+    gap: 6px;
+  }
+  .hero {
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .sub {
+    font-size: 11px;
+    line-height: 1.35;
+    padding-right: 30px;
+  }
+  .stats {
+    padding: 6px;
+    gap: 5px;
+  }
+  .stat {
+    border-radius: 14px;
+    padding: 7px 3px;
+  }
+  .stat .label {
+    font-size: 10px;
+  }
+  .stat .value {
+    font-size: 16px;
+  }
+  .mission {
+    left: 10px;
+    right: 10px;
+    top: 6px;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 18px;
+  }
+  .mission b {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  .badge {
+    width: 100%;
+    text-align: center;
+    white-space: normal;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  .tipbox {
+    left: 10px;
+    right: 10px;
+    top: 102px !important;
+    font-size: 12px !important;
+    line-height: 1.45;
+    padding: 8px 10px;
+    border-radius: 16px;
+  }
+  .playfield {
+    top: 170px !important;
+  }
+  .rail {
+    left: 10px;
+    right: 10px;
+    height: 66px !important;
+    border-radius: 24px;
+  }
+  .rail.r0 { top: 4px !important; }
+  .rail.r1 { top: 90px !important; }
+  .rail.r2 { top: 176px !important; }
+  .hitZone {
+    left: 88px !important;
+    width: 86px !important;
+    height: 66px !important;
+    border-width: 3px;
+    border-radius: 20px;
+  }
+  .hitZone.r0 { top: 4px !important; }
+  .hitZone.r1 { top: 90px !important; }
+  .hitZone.r2 { top: 176px !important; }
+  .hitTag {
+    left: 88px !important;
+    font-size: 10px !important;
+    padding: 4px 6px;
+  }
+  .hitTag.r0 { top: 4px !important; }
+  .hitTag.r1 { top: 90px !important; }
+  .hitTag.r2 { top: 176px !important; }
+  .railLabel {
+    font-size: 10px !important;
+    padding: 5px 8px;
+  }
+  .railLabel.r0 { top: -12px !important; }
+  .railLabel.r1 { top: 74px !important; }
+  .railLabel.r2 { top: 160px !important; }
+  .option {
+    width: 108px !important;
+    min-height: 62px !important;
+    padding: 8px 7px 9px;
+    border-radius: 16px;
+  }
+  .option .tag {
+    font-size: 10px;
+    padding: 4px 7px;
+    margin-bottom: 5px;
+  }
+  .option .txt {
+    font-size: 13px !important;
+    line-height: 1.15;
+  }
+  .player {
+    left: 14px !important;
+    width: 62px !important;
+    height: 84px !important;
+  }
+  .player .head {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .player .helmet {
+    width: 36px !important;
+    height: 12px !important;
+  }
+  .player .body {
+    width: 38px !important;
+    height: 26px !important;
+  }
+  .player .body::after {
+    top: 5px;
+    font-size: 13px;
+  }
+  .player .weapon {
+    top: 30px !important;
+    right: -6px !important;
+    font-size: 18px !important;
+  }
+  .player .leg {
+    width: 8px;
+    height: 18px;
+  }
+  .comboBarWrap {
+    left: 10px;
+    right: 10px;
+    bottom: 92px !important;
+  }
+  .comboHint {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+  .comboTrack {
+    height: 12px;
+  }
+  .ground {
+    height: 84px !important;
+  }
+  .grass {
+    bottom: 78px !important;
+    height: 22px;
+  }
+  .controls {
+    padding: 8px 10px calc(12px + env(safe-area-inset-bottom));
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  .ctrlBtn {
+    min-height: 56px !important;
+    font-size: 17px !important;
+    border-radius: 16px;
+    padding: 10px 8px;
+  }
+  .panel {
+    border-radius: 22px;
+    padding: 18px 14px;
+  }
+  .panel h1, .panel h2 {
+    font-size: 24px;
+  }
+  .panel p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .panel .bigbtn {
+    width: 100%;
+    min-height: 52px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 430px) {
+  .topbar {
+    padding: 6px 8px 4px;
+  }
+  .title {
+    font-size: 17px;
+  }
+  .sub {
+    font-size: 10px;
+  }
+  .mission {
+    padding: 8px 9px;
+  }
+  .mission b {
+    font-size: 15px !important;
+  }
+  .tipbox {
+    top: 98px !important;
+    font-size: 11px !important;
+  }
+  .playfield {
+    top: 162px !important;
+  }
+  .rail {
+    height: 62px !important;
+  }
+  .rail.r0 { top: 2px !important; }
+  .rail.r1 { top: 82px !important; }
+  .rail.r2 { top: 162px !important; }
+  .hitZone {
+    left: 80px !important;
+    width: 78px !important;
+    height: 62px !important;
+  }
+  .hitZone.r0 { top: 2px !important; }
+  .hitZone.r1 { top: 82px !important; }
+  .hitZone.r2 { top: 162px !important; }
+  .hitTag {
+    left: 80px !important;
+  }
+  .hitTag.r0 { top: 2px !important; }
+  .hitTag.r1 { top: 82px !important; }
+  .hitTag.r2 { top: 162px !important; }
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 70px !important; }
+  .railLabel.r2 { top: 150px !important; }
+  .option {
+    width: 96px !important;
+    min-height: 58px !important;
+  }
+  .option .txt {
+    font-size: 12px !important;
+  }
+  .player {
+    left: 11px !important;
+    width: 58px !important;
+    height: 78px !important;
+  }
+  .comboBarWrap {
+    bottom: 88px !important;
+  }
+  .ground {
+    height: 78px !important;
+  }
+  .grass {
+    bottom: 72px !important;
+  }
+  .controls {
+    gap: 6px !important;
+    padding: 8px 8px calc(12px + env(safe-area-inset-bottom));
+  }
+  .ctrlBtn {
+    min-height: 52px !important;
+    font-size: 16px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -285,6 +587,7 @@ body { min-height:100dvh; }
   <div class="topbar">
     <div class="card hero">
       <div class="title">🌍 環保戰士：三軌淨化衝鋒</div>
+      <div class="sub">questions.xlsx 題庫版｜3列選項｜角色上下換軌擊打｜手機可玩</div>
     </div>
     <div class="card stats">
       <div class="stat"><span class="label">⏱ 時間</span><span class="value" id="timeText">40</span></div>
