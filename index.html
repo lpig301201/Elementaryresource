@@ -1333,7 +1333,7 @@ button, .ctrlBtn, .bigbtn {
       <div class="stat"><span class="label">📘 進度</span><span class="value" id="timeText">1/10</span></div>
       <div class="stat"><span class="label">⭐ 分數</span><span class="value" id="scoreText">0</span></div>
       <div class="stat"><span class="label">🔥 連擊</span><span class="value" id="comboText">0</span></div>
-      <div class="stat"><span class="label">🎯 達標</span><span class="value">100</span></div>
+      <div class="stat"><span class="label">🎯 達標</span><span class="value">50</span></div>
     </div>
   </div>
 
@@ -1397,7 +1397,7 @@ button, .ctrlBtn, .bigbtn {
           <h1>🔋 電池回收任務</h1>
           <p>城鎮出現了亂丟的 <b>乾電池</b> 與 <b>鋰電池</b>！你要跟著劇情一路闖關，學會正確回收流程。</p>
           <p>三個答案會跑在 <b>上 / 中 / 下</b> 三條軌道，控制環保戰士上下移動，等正確答案進入 <b>淨化圈</b> 後再出手！</p>
-          <p>每答對一題就推進任務進度；答對 <b>+10 分</b>，完成全部 <b>10 關任務</b> 後即可結束並查看成果！</p>
+          <p>每答對一題就推進任務進度；答對 <b>+10 分</b>，完成全部 <b>10 關任務</b> 後即可查看成果；累積 <b>50 分以上</b> 可前往 LINE 抽獎！</p>
           <button class="bigbtn" id="startBtn">開始挑戰</button>
         </div>
       </div>
@@ -1406,7 +1406,10 @@ button, .ctrlBtn, .bigbtn {
         <div class="panel">
           <h2 id="endTitle">挑戰結束</h2>
           <p id="endDesc"></p>
-          <button class="bigbtn" id="restartBtn">再挑戰一次</button>
+          <div id="endActionWrap" style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+            <a class="bigbtn hidden" id="lineDrawBtn" href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" rel="noopener noreferrer">🎁 前往 LINE 抽獎</a>
+            <button class="bigbtn" id="restartBtn">再挑戰一次</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1627,7 +1630,7 @@ const QUESTION_BANK = [
 let storyIndex = 0;
 
 const GAME = {
-  passScore: 100,
+  passScore: 50,
   speed: 0.91,
   laneTop: [10,128,246],
   laneTopMobile: [4,74,144],
@@ -1645,6 +1648,7 @@ const timeText = document.getElementById('timeText');
 const scoreText = document.getElementById('scoreText');
 const comboText = document.getElementById('comboText');
 const comboFill = document.getElementById('comboFill');
+const lineDrawBtn = document.getElementById('lineDrawBtn');
 const comboHint = document.getElementById('comboHint');
 const trackerDots = document.getElementById('trackerDots');
 const startOverlay = document.getElementById('startOverlay');
@@ -1896,10 +1900,24 @@ function endGame(){
   clearActiveOptions();
   endOverlay.classList.remove('hidden');
   const completed = storyIndex >= QUESTION_BANK.length;
+  const passed = score >= GAME.passScore;
+
+  if(lineDrawBtn){
+    lineDrawBtn.classList.add('hidden');
+  }
+
   endTitle.textContent = completed ? '🎉 任務完成！' : '🌱 任務中止';
-  endDesc.textContent = completed
-    ? `你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個電池回收任務！乾電池與鋰電池的正確流程，已經被你完整守護。`
-    : `你得到 ${score} 分，任務尚未完成。記得先分類、包覆、再送回收點！`;
+
+  if(completed && passed){
+    endDesc.textContent = `你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個電池回收任務，並達到 LINE 抽獎門檻！點下方按鈕即可前往抽獎活動。`;
+    if(lineDrawBtn){
+      lineDrawBtn.classList.remove('hidden');
+    }
+  }else if(completed){
+    endDesc.textContent = `你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個任務，但還差一點點才達到抽獎門檻。再接再厲，要不要再玩一次挑戰 50 分以上？`;
+  }else{
+    endDesc.textContent = `你得到 ${score} 分，任務尚未完成。再接再厲，要不要再玩一次，把電池回收流程全部守護完成？`;
+  }
 }
 
 function startGame(){
