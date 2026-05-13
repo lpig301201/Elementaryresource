@@ -1320,6 +1320,135 @@ button, .ctrlBtn, .bigbtn {
   .playfield{ top:182px !important; }
 }
 
+
+
+/* === 咸豐調整版：移除任務地圖、答案提示色、音效，放大題目 === */
+.stageTracker { display:none !important; }
+.mission b {
+  font-size: 30px !important;
+  line-height: 1.35 !important;
+}
+.option,
+.option.correct,
+.option.wrong {
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,251,255,.94)) !important;
+  border-color: rgba(255,255,255,.98) !important;
+  outline: none !important;
+  box-shadow: 0 16px 24px rgba(0,0,0,.12) !important;
+}
+.option .tag { display:none !important; }
+.option .txt {
+  font-size: 20px !important;
+  line-height: 1.25 !important;
+}
+.controls {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+#muteBtn { display:none !important; }
+.playfield { top: 156px !important; }
+
+@media (max-width: 768px) {
+  .mission b {
+    font-size: 20px !important;
+    line-height: 1.28 !important;
+  }
+  .tipbox { top: 92px !important; }
+  .playfield { top: 142px !important; }
+  .option .txt {
+    font-size: 13px !important;
+    line-height: 1.18 !important;
+  }
+  .controls {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .mission b { font-size: 18px !important; }
+  .tipbox { top: 86px !important; }
+  .playfield { top: 132px !important; }
+  .option .txt { font-size: 12px !important; }
+}
+
+
+/* === 文字排版優化：避免中文孤字成行 === */
+.mission b,
+.option .txt,
+.panel p,
+.panel h1,
+.panel h2,
+.badge,
+.tipbox {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  line-break: strict !important;
+  text-wrap: balance;
+  letter-spacing: .01em;
+}
+.nowrapChunk {
+  display: inline-block;
+  white-space: nowrap;
+}
+.option {
+  width: 178px !important;
+  min-height: 88px !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+.option .txt {
+  max-width: 100%;
+  text-align: center;
+  font-size: 18px !important;
+  line-height: 1.32 !important;
+}
+.mission b {
+  display: block;
+  padding-right: 4px;
+}
+.panel p {
+  max-width: 34em;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+@media (max-width: 768px) {
+  .mission b {
+    font-size: 21px !important;
+    line-height: 1.34 !important;
+  }
+  .option {
+    width: 122px !important;
+    min-height: 58px !important;
+    padding: 6px 8px 7px !important;
+  }
+  .option .txt {
+    font-size: 12.5px !important;
+    line-height: 1.22 !important;
+  }
+}
+@media (max-width: 430px) {
+  .mission b {
+    font-size: 19px !important;
+    line-height: 1.34 !important;
+  }
+  .option {
+    width: 112px !important;
+    min-height: 54px !important;
+    padding: 5px 7px 6px !important;
+  }
+  .option .txt {
+    font-size: 11.5px !important;
+    line-height: 1.2 !important;
+  }
+}
+@media (max-width: 380px) {
+  .option {
+    width: 106px !important;
+  }
+  .option .txt {
+    font-size: 11px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1354,11 +1483,6 @@ button, .ctrlBtn, .bigbtn {
     <div class="card tipbox">
       <span class="mini">操作</span>
       按 <b>⬆️⬇️</b> 切換三條軌道，等答案卡進入左側 <b>淨化圈</b> 後，按 <b>⚔️ 攻擊</b>！
-    </div>
-
-    <div class="stageTracker card">
-      <div class="trackerTitle">🗺️ 任務地圖</div>
-      <div class="trackerDots" id="trackerDots"></div>
     </div>
 
     <div class="playfield" id="playfield">
@@ -1407,7 +1531,7 @@ button, .ctrlBtn, .bigbtn {
           <h2 id="endTitle">挑戰結束</h2>
           <p id="endDesc"></p>
           <div id="endActionWrap" style="display:flex;flex-direction:column;gap:10px;align-items:center;">
-            <a class="bigbtn hidden" id="lineDrawBtn" href="https://event.line.me/r/UUkhGqCilHi5Q0AC/5icUOz">🎁 前往 LINE 抽獎</a>
+            <a class="bigbtn hidden" id="lineDrawBtn" href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" rel="noopener noreferrer">🎁 前往 LINE 抽獎</a>
             <button class="bigbtn" id="restartBtn">再挑戰一次</button>
           </div>
         </div>
@@ -1419,7 +1543,6 @@ button, .ctrlBtn, .bigbtn {
     <button class="ctrlBtn" id="upBtn" type="button">⬆️ 上移</button>
     <button class="ctrlBtn" id="downBtn" type="button">⬇️ 下移</button>
     <button class="ctrlBtn" id="attackBtn" type="button">⚔️ 攻擊</button>
-    <button class="ctrlBtn" id="muteBtn" type="button">🔊 音效</button>
   </div>
 </div>
 
@@ -1650,7 +1773,7 @@ const comboText = document.getElementById('comboText');
 const comboFill = document.getElementById('comboFill');
 const lineDrawBtn = document.getElementById('lineDrawBtn');
 const comboHint = document.getElementById('comboHint');
-const trackerDots = document.getElementById('trackerDots');
+const trackerDots = null;
 const startOverlay = document.getElementById('startOverlay');
 const endOverlay = document.getElementById('endOverlay');
 const endTitle = document.getElementById('endTitle');
@@ -1664,7 +1787,6 @@ let activeOptions = [];
 let animationId = null;
 let running = false;
 let inputLocked = false;
-let muted = false;
 
 
 function centerRails(){
@@ -1753,7 +1875,8 @@ function shuffle(arr){
 }
 
 function pickQuestion(){
-  const q = QUESTION_BANK[storyIndex % QUESTION_BANK.length];
+  if(storyIndex >= QUESTION_BANK.length) return null;
+  const q = QUESTION_BANK[storyIndex];
   storyIndex += 1;
   const opts = q.options.filter(o => o && o.text);
   const correct = opts.find(o => o.label === q.answer) || opts[0];
@@ -1773,20 +1896,69 @@ function pickQuestion(){
   };
 }
 
+
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function chunkCJKSegment(seg){
+  const chars = Array.from(seg);
+  const n = chars.length;
+  if(n <= 6) return [seg];
+  const chunks = [];
+  let i = 0;
+  while(n - i > 0){
+    let remain = n - i;
+    let size = remain <= 6 ? remain : 4;
+    if(remain === 7 || remain === 9 || remain === 10) size = remain - 4;
+    if(remain - size === 1) size += 1;
+    chunks.push(chars.slice(i, i + size).join(''));
+    i += size;
+  }
+  return chunks;
+}
+
+function smartWrapText(text){
+  const raw = String(text);
+  const parts = raw.match(/[\u4e00-\u9fff\u3400-\u4dbfぁ-んァ-ンㄅ-ㄩ]+|[^\u4e00-\u9fff\u3400-\u4dbfぁ-んァ-ンㄅ-ㄩ]+/g) || [raw];
+  const chunks = [];
+  parts.forEach(part => {
+    if(/^[\u4e00-\u9fff\u3400-\u4dbfぁ-んァ-ンㄅ-ㄩ]+$/.test(part)){
+      chunks.push(...chunkCJKSegment(part));
+    }else{
+      // 標點符號接在前一段，避免標點獨立成行
+      if(chunks.length && /^[，。、！？：；、）】》」』]/.test(part)){
+        chunks[chunks.length - 1] += part;
+      }else{
+        chunks.push(part);
+      }
+    }
+  });
+  return chunks.filter(Boolean).map(c => `<span class="nowrapChunk">${escapeHTML(c)}</span>`).join('');
+}
+
 function renderQuestion(){
+  if(storyIndex >= QUESTION_BANK.length){
+    endGame();
+    return;
+  }
   clearActiveOptions();
   currentQuestion = pickQuestion();
-  questionText.textContent = currentQuestion.question;
+  if(!currentQuestion){
+    endGame();
+    return;
+  }
+  questionText.innerHTML = smartWrapText(currentQuestion.question);
   tipBadge.textContent = currentQuestion.category || '移動到正確列再淨化攻擊！';
 
   activeOptions = currentQuestion.cards.map((card, i) => {
     const el = document.createElement('div');
-    el.className = 'option ' + (card.correct ? 'correct' : 'wrong');
-    el.style.left = (window.innerWidth + i * 92) + 'px';
-    el.innerHTML = `<div class="tag">${card.correct ? '淨化目標' : '污染怪物'}</div><div class="txt">${card.text}</div>`;
+    el.className = 'option';
+    el.style.left = (window.innerWidth + 18) + 'px';
+    el.innerHTML = `<div class="txt">${smartWrapText(card.text)}</div>`;
     playfield.appendChild(el);
     el.style.top = lanePx(card.lane, el.offsetHeight) + 'px';
-    return { ...card, el, x: window.innerWidth + i * 92, hit:false };
+    return { ...card, el, x: window.innerWidth + 18, hit:false };
   });
 }
 
@@ -1804,21 +1976,9 @@ function feedback(text){
 }
 
 function beep(type='ok'){
-  if(muted) return;
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type === 'bad' ? 'sawtooth' : (type === 'combo' ? 'triangle' : 'square');
-    osc.frequency.value = type === 'bad' ? 180 : (type === 'combo' ? 660 : 420);
-    gain.gain.value = 0.03;
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start();
-    osc.frequency.exponentialRampToValueAtTime(type === 'bad' ? 120 : 860, ctx.currentTime + 0.12);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.15);
-    osc.stop(ctx.currentTime + 0.16);
-  } catch(e) {}
+  // 音效已移除
 }
+
 
 function attack(){
   if(!running || inputLocked) return;
@@ -1860,7 +2020,7 @@ function attack(){
   setTimeout(() => {
     inputLocked = false;
     if(!running) return;
-    if(target.correct && storyIndex >= QUESTION_BANK.length){
+    if(storyIndex >= QUESTION_BANK.length){
       endGame();
     } else {
       renderQuestion();
@@ -1888,7 +2048,11 @@ function gameLoop(){
     feedback('⏳ 錯過目標！');
     comboHint.textContent = currentQuestion.explain || '別急，下一關再把正確答案打回來！';
     beep('bad');
-    renderQuestion();
+    if(storyIndex >= QUESTION_BANK.length){
+      endGame();
+    } else {
+      renderQuestion();
+    }
   }
 
   animationId = requestAnimationFrame(gameLoop);
@@ -1909,14 +2073,14 @@ function endGame(){
   endTitle.textContent = completed ? '🎉 任務完成！' : '🌱 任務中止';
 
   if(completed && passed){
-    endDesc.textContent = `你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個電池回收任務，並達到 LINE 抽獎門檻！點下方按鈕即可前往抽獎活動。`;
+    endDesc.innerHTML = smartWrapText(`你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個電池回收任務，並達到 LINE 抽獎門檻！點下方按鈕即可前往抽獎活動。`);
     if(lineDrawBtn){
       lineDrawBtn.classList.remove('hidden');
     }
   }else if(completed){
-    endDesc.textContent = `你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個任務，但還差一點點才達到抽獎門檻。再接再厲，要不要再玩一次挑戰 50 分以上？`;
+    endDesc.innerHTML = smartWrapText(`你得到 ${score} 分，已完成全部 ${QUESTION_BANK.length} 個任務，但還差一點點才達到抽獎門檻。再接再厲，要不要再玩一次挑戰 50 分以上？`);
   }else{
-    endDesc.textContent = `你得到 ${score} 分，任務尚未完成。再接再厲，要不要再玩一次，把電池回收流程全部守護完成？`;
+    endDesc.innerHTML = smartWrapText(`你得到 ${score} 分，任務尚未完成。再接再厲，要不要再玩一次，把電池回收流程全部守護完成？`);
   }
 }
 
@@ -1941,10 +2105,6 @@ document.getElementById('restartBtn').addEventListener('click', startGame);
 document.getElementById('upBtn').addEventListener('click', () => movePlayerToLane(laneIndex - 1));
 document.getElementById('downBtn').addEventListener('click', () => movePlayerToLane(laneIndex + 1));
 document.getElementById('attackBtn').addEventListener('click', attack);
-document.getElementById('muteBtn').addEventListener('click', (e) => {
-  muted = !muted;
-  e.currentTarget.textContent = muted ? '🔇 靜音' : '🔊 音效';
-});
 
 window.addEventListener('keydown', (e) => {
   if(e.key === 'ArrowUp') movePlayerToLane(laneIndex - 1);
