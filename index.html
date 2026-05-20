@@ -1520,6 +1520,31 @@ button, .ctrlBtn, .bigbtn {
   }
 }
 
+
+/* === 2026-05-20 手機版修正：避免綠色關卡欄位被操作說明遮住 === */
+@media (max-width: 768px) {
+  .mission {
+    overflow: visible !important;
+    z-index: 20 !important;
+  }
+  .mission .badge {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+    line-height: 1.2 !important;
+    min-height: 32px !important;
+  }
+  .tipbox {
+    z-index: 19 !important;
+  }
+}
+@media (max-width: 430px) {
+  .mission .badge {
+    min-height: 30px !important;
+    margin-top: 5px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1838,6 +1863,8 @@ const playfield = document.getElementById('playfield');
 const player = document.getElementById('player');
 const questionText = document.getElementById('questionText');
 const tipBadge = document.getElementById('tipBadge');
+const missionEl = document.querySelector('.mission');
+const tipboxEl = document.querySelector('.tipbox');
 const timeText = document.getElementById('timeText');
 const scoreText = document.getElementById('scoreText');
 const comboText = document.getElementById('comboText');
@@ -1859,6 +1886,28 @@ let animationId = null;
 let running = false;
 let inputLocked = false;
 
+
+
+function adjustStackLayout(){
+  if(!missionEl || !tipboxEl || !playfield) return;
+  if(window.innerWidth > 768){
+    tipboxEl.style.top = '';
+    playfield.style.top = '';
+    return;
+  }
+
+  // 依題目實際高度重新排版：題目卡 → 綠色關卡欄 → 操作說明 → 三軌遊戲區
+  // 這樣題目變成兩行或三行時，操作說明不會蓋住綠色關卡欄。
+  const missionTop = missionEl.offsetTop || 4;
+  const missionH = missionEl.offsetHeight || 92;
+  const gap1 = window.innerWidth <= 430 ? 6 : 8;
+  const tipTop = missionTop + missionH + gap1;
+  tipboxEl.style.top = tipTop + 'px';
+
+  const tipH = tipboxEl.offsetHeight || 34;
+  const gap2 = window.innerWidth <= 430 ? 8 : 10;
+  playfield.style.top = (tipTop + tipH + gap2) + 'px';
+}
 
 function centerRails(){
   const rails = [...playfield.querySelectorAll('.rail')];
@@ -1916,7 +1965,8 @@ function movePlayerToLane(idx){
   const playerOffset = window.innerWidth <= 768 ? 2 : 0;
   player.style.top = (lanePx(laneIndex, player.offsetHeight) + playerOffset) + 'px';
 }
-window.addEventListener('resize', () => { centerRails(); movePlayerToLane(laneIndex); activeOptions.forEach(item => item.el.style.top = lanePx(item.lane, item.el.offsetHeight) + 'px'); });
+window.addEventListener('resize', () => { adjustStackLayout(); centerRails(); movePlayerToLane(laneIndex); activeOptions.forEach(item => item.el.style.top = lanePx(item.lane, item.el.offsetHeight) + 'px'); });
+adjustStackLayout();
 centerRails();
 movePlayerToLane(1);
 
@@ -2021,6 +2071,9 @@ function renderQuestion(){
   }
   questionText.innerHTML = smartWrapText(currentQuestion.question);
   tipBadge.textContent = currentQuestion.category || '移動到正確列再淨化攻擊！';
+  adjustStackLayout();
+  centerRails();
+  movePlayerToLane(laneIndex);
 
   activeOptions = currentQuestion.cards.map((card, i) => {
     const el = document.createElement('div');
@@ -2162,6 +2215,7 @@ function startGame(){
   inputLocked = false;
   storyIndex = 0;
   updateHUD();
+  adjustStackLayout();
   centerRails();
   movePlayerToLane(1);
   renderQuestion();
@@ -2202,6 +2256,8 @@ playfield.addEventListener('touchend', (e) => {
 }, {passive:true});
 
 window.addEventListener('resize', () => {
+  adjustStackLayout();
+  centerRails();
   movePlayerToLane(laneIndex);
   activeOptions.forEach(item => {
     item.el.style.top = (lanePx(item.lane) + 3) + 'px';
