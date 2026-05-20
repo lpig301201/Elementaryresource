@@ -1545,6 +1545,30 @@ button, .ctrlBtn, .bigbtn {
   }
 }
 
+
+/* === 2026-05-20 最終修正：兩行題目時，綠色關卡欄不可被操作說明遮住 === */
+@media (max-width: 768px) {
+  .mission {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .mission .badge {
+    position: relative !important;
+    z-index: 25 !important;
+    display: block !important;
+    margin-top: 8px !important;
+  }
+  .tipbox {
+    position: absolute !important;
+    z-index: 15 !important;
+    white-space: normal !important;
+  }
+  .playfield {
+    z-index: 4 !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1891,22 +1915,24 @@ let inputLocked = false;
 function adjustStackLayout(){
   if(!missionEl || !tipboxEl || !playfield) return;
   if(window.innerWidth > 768){
-    tipboxEl.style.top = '';
-    playfield.style.top = '';
+    tipboxEl.style.removeProperty('top');
+    playfield.style.removeProperty('top');
     return;
   }
 
-  // 依題目實際高度重新排版：題目卡 → 綠色關卡欄 → 操作說明 → 三軌遊戲區
-  // 這樣題目變成兩行或三行時，操作說明不會蓋住綠色關卡欄。
-  const missionTop = missionEl.offsetTop || 4;
-  const missionH = missionEl.offsetHeight || 92;
-  const gap1 = window.innerWidth <= 430 ? 6 : 8;
-  const tipTop = missionTop + missionH + gap1;
-  tipboxEl.style.top = tipTop + 'px';
+  // 手機版改為「實際量測」排版：題目卡 → 綠色關卡欄 → 操作說明 → 三軌遊戲區。
+  // 原本 CSS 有許多 !important 固定 top，單純 style.top 會被蓋掉，
+  // 所以這裡用 setProperty(..., 'important')，避免兩行題目時操作說明壓住綠色欄位。
+  const gameTop = gameArea.getBoundingClientRect().top;
+  const missionRect = missionEl.getBoundingClientRect();
+  const missionBottom = missionRect.bottom - gameTop;
+  const gap1 = window.innerWidth <= 430 ? 12 : 14;
+  const tipTop = Math.ceil(missionBottom + gap1);
+  tipboxEl.style.setProperty('top', tipTop + 'px', 'important');
 
-  const tipH = tipboxEl.offsetHeight || 34;
-  const gap2 = window.innerWidth <= 430 ? 8 : 10;
-  playfield.style.top = (tipTop + tipH + gap2) + 'px';
+  const tipH = Math.ceil(tipboxEl.getBoundingClientRect().height || tipboxEl.offsetHeight || 36);
+  const gap2 = window.innerWidth <= 430 ? 12 : 14;
+  playfield.style.setProperty('top', (tipTop + tipH + gap2) + 'px', 'important');
 }
 
 function centerRails(){
@@ -1968,6 +1994,8 @@ function movePlayerToLane(idx){
 window.addEventListener('resize', () => { adjustStackLayout(); centerRails(); movePlayerToLane(laneIndex); activeOptions.forEach(item => item.el.style.top = lanePx(item.lane, item.el.offsetHeight) + 'px'); });
 adjustStackLayout();
 centerRails();
+requestAnimationFrame(() => { adjustStackLayout(); centerRails(); movePlayerToLane(laneIndex); });
+setTimeout(() => { adjustStackLayout(); centerRails(); movePlayerToLane(laneIndex); }, 120);
 movePlayerToLane(1);
 
 
