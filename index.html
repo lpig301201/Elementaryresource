@@ -1449,6 +1449,77 @@ button, .ctrlBtn, .bigbtn {
   }
 }
 
+
+
+/* === 2026-05-20 手機版版面修正：操作說明不再被軌道/答案卡遮住 === */
+@media (max-width: 768px) {
+  /* 讓操作說明層級高於軌道與答案卡，並給它完整可讀空間 */
+  .tipbox {
+    z-index: 18 !important;
+    top: 102px !important;
+    left: 8px !important;
+    right: 8px !important;
+    min-height: 34px !important;
+    padding: 7px 9px !important;
+    line-height: 1.35 !important;
+    background: rgba(255,255,255,.96) !important;
+    border: 2px solid rgba(255,255,255,.98) !important;
+    box-shadow: 0 8px 18px rgba(18,50,74,.12) !important;
+    overflow: visible !important;
+  }
+
+  /* 將三軌遊戲區整體往下移，避免第一軌壓到操作說明 */
+  .playfield {
+    top: 154px !important;
+    bottom: 0 !important;
+    z-index: 4 !important;
+  }
+
+  /* 保留三軌間距，但讓手機畫面仍能完整看到 */
+  .rail.r0, .hitZone.r0, .hitTag.r0 { top: 0 !important; }
+  .rail.r1, .hitZone.r1, .hitTag.r1 { top: 64px !important; }
+  .rail.r2, .hitZone.r2, .hitTag.r2 { top: 128px !important; }
+
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 52px !important; }
+  .railLabel.r2 { top: 116px !important; }
+
+  /* 角色不要跑到操作說明區 */
+  .player {
+    z-index: 7 !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .tipbox {
+    top: 96px !important;
+    font-size: 9.5px !important;
+    min-height: 32px !important;
+    padding: 6px 8px !important;
+  }
+  .playfield {
+    top: 144px !important;
+  }
+
+  .rail.r0, .hitZone.r0, .hitTag.r0 { top: 0 !important; }
+  .rail.r1, .hitZone.r1, .hitTag.r1 { top: 60px !important; }
+  .rail.r2, .hitZone.r2, .hitTag.r2 { top: 120px !important; }
+
+  .railLabel.r0 { top: -10px !important; }
+  .railLabel.r1 { top: 50px !important; }
+  .railLabel.r2 { top: 110px !important; }
+}
+
+@media (max-width: 380px) {
+  .tipbox {
+    top: 92px !important;
+    font-size: 9px !important;
+  }
+  .playfield {
+    top: 138px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1554,18 +1625,18 @@ const QUESTION_BANK = [
     "options": [
       {
         "label": "A",
-        "text": "集中回收"
+        "text": "丟一般垃圾"
       },
       {
         "label": "B",
-        "text": "丟一般垃圾"
+        "text": "集中回收"
       },
       {
         "label": "C",
         "text": "隨便丟抽屜"
       }
     ],
-    "answer": "A",
+    "answer": "B",
     "explain": "乾電池屬公告應回收項目，應集中後交給回收點。教學重點：乾電池不可混入一般垃圾。"
   },
   {
@@ -1589,64 +1660,64 @@ const QUESTION_BANK = [
     "explain": "鋰電池若短路、受損或受壓，可能引發發熱甚至火災。教學重點：鋰電池回收前先做安全處理。"
   },
   {
-    "category": "第3關｜分類整備",
-    "question": "電池回收時正確行為是？",
+    "category": "第3關｜勇者訓練",
+    "question": "回收電池時，如果看到電池漏液應該怎麼處理？",
     "options": [
       {
         "label": "A",
-        "text": "分類集中再交回收"
+        "text": "用手直接擦乾淨"
       },
       {
         "label": "B",
-        "text": "混在一般垃圾裡"
+        "text": "放口袋直接帶回家"
       },
       {
         "label": "C",
-        "text": "和紙類一起回收"
+        "text": "避免直接接觸並妥善回收"
       }
     ],
-    "answer": "A",
-    "explain": "先分類、集中，再交給合法回收點，流程最安全。教學重點：不要把電池混入其他回收物或垃圾。"
+    "answer": "C",
+    "explain": "電池漏出的液體含化學物質容易灼傷須妥善處理回收。"
   },
   {
     "category": "第4關｜回收據點",
-    "question": "鋰電池可以交到哪裡回收？",
+    "question": "哪裡可以回收乾電池？",
     "options": [
       {
         "label": "A",
-        "text": "超商、量販店或指定回收點"
+        "text": "公園草地"
       },
       {
         "label": "B",
-        "text": "廚餘桶"
+        "text": "水溝"
       },
       {
         "label": "C",
-        "text": "一般垃圾車"
+        "text": "超商或回收點"
       }
     ],
-    "answer": "A",
-    "explain": "常見回收據點包含超商、量販店與指定回收設施。教學重點：知道正確回收去向。"
+    "answer": "C",
+    "explain": "可將乾電池交至合適回收通路或回收點。教學重點：電池應交給指定回收管道，不可任意丟棄。"
   },
   {
-    "category": "第5關｜危險排除",
-    "question": "發現膨脹或受損的鋰電池，應該怎麼做？",
+    "category": "第5關｜能源危機",
+    "question": "鋰電池如果受損可能造成什麼問題？",
     "options": [
       {
         "label": "A",
-        "text": "先隔離並儘快送指定回收"
+        "text": "可以自動充電"
       },
       {
         "label": "B",
-        "text": "繼續使用到沒電"
+        "text": "起火燃燒"
       },
       {
         "label": "C",
-        "text": "拿尖銳物戳破"
+        "text": "完全沒影響"
       }
     ],
-    "answer": "A",
-    "explain": "膨脹或受損的鋰電池風險高，應避免再使用並妥善處理。教學重點：異常鋰電池要小心隔離，不可破壞。"
+    "answer": "B",
+    "explain": "鋰電池受損可能造成短路、發熱或起火。教學重點：破損鋰電池要特別注意安全。"
   },
   {
     "category": "第6關｜守護城市",
@@ -1694,18 +1765,18 @@ const QUESTION_BANK = [
     "options": [
       {
         "label": "A",
-        "text": "先分類後再交回收"
+        "text": "直接丟一般垃圾"
       },
       {
         "label": "B",
-        "text": "全部混成一袋最方便"
+        "text": "全部混成一袋丟路邊"
       },
       {
         "label": "C",
-        "text": "先丟一般垃圾再說"
+        "text": "先分類後再交回收"
       }
     ],
-    "answer": "A",
+    "answer": "C",
     "explain": "不同電池性質不同，先分類再交回收更安全也更好處理。教學重點：不要把不同電池與垃圾混在一起。"
   },
   {
@@ -1714,39 +1785,39 @@ const QUESTION_BANK = [
     "options": [
       {
         "label": "A",
-        "text": "停止使用並遠離可燃物"
+        "text": "繼續使用不能浪費"
       },
       {
         "label": "B",
-        "text": "繼續充電看會不會好"
+        "text": "停止使用並妥善處理"
       },
       {
         "label": "C",
-        "text": "放在棉被旁邊降溫"
+        "text": "用力摔地板重擊修好"
       }
     ],
-    "answer": "A",
-    "explain": "異常發熱代表可能已受損，應立即停用並遠離易燃物。教學重點：過熱鋰電池不可繼續充電或貼近可燃物。"
+    "answer": "B",
+    "explain": "異常發熱時應停止使用，避免繼續充電或放在易燃物旁。教學重點：異常鋰電池要先排除危險。"
   },
   {
-    "category": "第10關｜任務總結",
-    "question": "家中暫時存放待回收電池，較安全的方式是？",
+    "category": "第10關｜最終淨化",
+    "question": "以下哪個是正確的電池回收觀念？",
     "options": [
       {
         "label": "A",
-        "text": "放陰涼乾燥處並避免孩童誤拿"
+        "text": "回收前做好分類與安全處理"
       },
       {
         "label": "B",
-        "text": "放在陽台曝曬"
+        "text": "電池都可以亂丟"
       },
       {
         "label": "C",
-        "text": "放瓦斯爐旁邊"
+        "text": "電池不需要回收"
       }
     ],
     "answer": "A",
-    "explain": "待回收電池應避免高溫、潮濕與孩童誤觸。教學重點：家中暫存也要注意安全。"
+    "explain": "回收前先分類，鋰電池做好絕緣與安全檢查，再交給回收管道。教學重點：分類、安全、回收三步驟。"
   }
 ];
 
