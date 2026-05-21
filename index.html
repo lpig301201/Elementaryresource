@@ -2031,11 +2031,11 @@ function pickQuestion(){
   const correct = opts.find(o => o.label === q.answer) || opts[0];
   const wrongs = opts.filter(o => o.label !== q.answer).slice(0, 2);
 
-  const cards = shuffle([
-    { text: correct.text, correct: true },
-    { text: wrongs[0]?.text || '丟一般垃圾', correct: false },
-    { text: wrongs[1]?.text || '隨手亂丟', correct: false },
-  ]).map((item, idx) => ({ ...item, lane: idx }));
+  const cards = [
+    { text: opts[0]?.text || '', correct: opts[0]?.label === q.answer, lane: 0 },
+    { text: opts[1]?.text || '', correct: opts[1]?.label === q.answer, lane: 1 },
+    { text: opts[2]?.text || '', correct: opts[2]?.label === q.answer, lane: 2 },
+  ];
 
   return {
     question: q.question,
